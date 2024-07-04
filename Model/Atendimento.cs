@@ -8,14 +8,18 @@ namespace Model
         public DateOnly DataFim { get; set; }
         public double CustoTotal { get; set; }
         public string Descricao { get; set; }
+        // public double? CustoExtra { get; set; }
+        // public double? Desconto { get; set; }
 
         public Atendimento() { }
-        public Atendimento(DateOnly datafim, double custototal, string descricao)
+        public Atendimento(DateOnly datafim, double custototal, string descricao /*, double? custoextra, double? desconto*/)
         {
             DataInicio = DateTime.Now;
             DataFim = datafim;
             CustoTotal = custototal;
             Descricao = descricao;
+            // CustoExtra = custoextra;
+            // Desconto = desconto;
 
             DB.Criar(this);
         }

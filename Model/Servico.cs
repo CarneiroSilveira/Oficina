@@ -6,16 +6,13 @@ namespace Model
         public int Id { get; set; }
         public string Nome { get; set; }
         public double Preco { get; set; }
-        public double? CustoExtra { get; set; }
-        public double? Desconto { get; set; }
+
 
         public Servico() { }
-        public Servico(string nome, double preco, double? custoextra, double? desconto)
+        public Servico(string nome, double preco)
         {
             Nome = nome;
             Preco = preco;
-            CustoExtra = custoextra;
-            Desconto = desconto;
 
             DB.Criar(this);
         }
