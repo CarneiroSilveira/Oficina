@@ -6,7 +6,7 @@ namespace Model
         public int Id { get; set; }
         public string Nome { get; set; }
         public bool? ClienteNovo { get; set; } = true;
-        public string Numero { get; set; }
+        public string Contato { get; set; }
         public string? Email { get; set; }
 
         public Cliente() { }
@@ -33,9 +33,9 @@ namespace Model
         public static void AlterarCliente(
             int indice,
             string nome,
-            string numero,
-            string? email,
-            bool clientenovo
+            bool? clientenovo,
+            string contato,
+            string? email
         )
         {
             DB.Update("cliente", indice, nome, numero, email, clientenovo);
