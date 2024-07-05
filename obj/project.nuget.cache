@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "DhmP6/4RC7C23HTKbn8TWP2UW0kv/buZcKke+x3AQf1jNQyku6RFZiA3adz5/gjyedFvFE3+Geg1PI/PK9ZDuA==",
+  "dgSpecHash": "A8vWk4RRcEY=",
   "success": true,
-  "projectFilePath": "C:\\Users\\ian.silveira\\Desktop\\Oficina-Atecubanos\\Oficina-Atecubanos.csproj",
+  "projectFilePath": "C:\\Users\\ianfe\\OneDrive\\Documentos\\Projetos\\Projetos Jovem Programador\\Oficina-Atecubanos\\Oficina-Atecubanos.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\ian.silveira\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\7.0.1\\microsoft.extensions.logging.abstractions.7.0.1.nupkg.sha512",
-    "C:\\Users\\ian.silveira\\.nuget\\packages\\mysqlconnector\\2.3.7\\mysqlconnector.2.3.7.nupkg.sha512"
+    "C:\\Users\\ianfe\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\7.0.1\\microsoft.extensions.logging.abstractions.7.0.1.nupkg.sha512",
+    "C:\\Users\\ianfe\\.nuget\\packages\\mysqlconnector\\2.3.7\\mysqlconnector.2.3.7.nupkg.sha512"
   ],
   "logs": []
 }

@@ -7,15 +7,17 @@ namespace Model
         public string Nome { get; set; }
         public double Preco { get; set; }
         public int Quantidade { get; set; }
+        public int? IdAtendimento { get; set; }
 
         public Produtos() { }
-        public Produtos(string nome, double preco, int quantidade)
+        public Produtos(string nome, double preco, int quantidade, int? idatendimento)
         {
             Nome = nome;
             Preco = preco;
             Quantidade = quantidade;
+            IdAtendimento = idatendimento;
 
-            DB.Criar(this);
+            DB.Criar("produtos", this);
         }
 
         public static List<Produtos> Sincronizar()

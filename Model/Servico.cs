@@ -6,15 +6,17 @@ namespace Model
         public int Id { get; set; }
         public string Nome { get; set; }
         public double Preco { get; set; }
+        public int? IdAtendimento { get; set; }
 
 
         public Servico() { }
-        public Servico(string nome, double preco)
+        public Servico(string nome, double preco, int? idatendimento)
         {
             Nome = nome;
             Preco = preco;
+            IdAtendimento = idatendimento;
 
-            DB.Criar(this);
+            DB.Criar("servico", this);
         }
 
         public static List<Servico> Sincronizar()
@@ -30,12 +32,10 @@ namespace Model
         public static void AlterarServico(
             int indice,
             string nome,
-            double preco,
-            double? custoextra,
-            double? desconto
+            double preco
         )
         {
-            DB.Update("servico", indice, nome, preco, custoextra, desconto);
+            DB.Update("servico", indice, nome, preco);
         }
 
         public static void DeletarServico(int indice)

@@ -5,23 +5,25 @@ namespace Model
     {
         public int Id { get; set; }
         public DateTime DataInicio { get; set; }
-        public DateOnly DataFim { get; set; }
+        public DateTime DataFim { get; set; }
+        public int? IdCliente { get; set; }
         public double CustoTotal { get; set; }
         public string Descricao { get; set; }
-        // public double? CustoExtra { get; set; }
-        // public double? Desconto { get; set; }
+        public double? CustoExtra { get; set; }
+        public double? Desconto { get; set; }
 
         public Atendimento() { }
-        public Atendimento(DateOnly datafim, double custototal, string descricao /*, double? custoextra, double? desconto*/)
+        public Atendimento(DateTime datafim, double custototal, string descricao, double? custoextra, double? desconto, int? idcliente)
         {
             DataInicio = DateTime.Now;
             DataFim = datafim;
             CustoTotal = custototal;
             Descricao = descricao;
-            // CustoExtra = custoextra;
-            // Desconto = desconto;
+            CustoExtra = custoextra;
+            Desconto = desconto;
+            IdCliente = idcliente;
 
-            DB.Criar(this);
+            DB.Criar("atendimento", this);
         }
 
         public static List<Atendimento> Sincronizar()
@@ -36,12 +38,15 @@ namespace Model
 
         public static void AlterarAtendimento(
             int indice,
-            DateOnly datafim,
+            DateTime datafim,
             double custototal,
-            string descricao
+            string descricao,
+            double? custoextra,
+            double? desconto
+
         )
         {
-            DB.Update("atendimento", indice, datafim, custototal, descricao);
+            DB.Update("atendimento", indice, datafim, custototal, descricao, custoextra, desconto);
         }
 
         public static void DeletarAtendimento(int indice)
