@@ -11,9 +11,11 @@ namespace Model
         public string Descricao { get; set; }
         public double? CustoExtra { get; set; }
         public double? Desconto { get; set; }
+        public List<Servico> Servicos { get; set; }
+        public List<ProdutoUsado> Produtos { get; set; }
 
         public Atendimento() { }
-        public Atendimento(DateTime datafim, double custototal, string descricao, double? custoextra, double? desconto, int? idcliente)
+        public Atendimento(DateTime datafim, double custototal, string descricao, double? custoextra, double? desconto, int? idcliente, List<Servico> servicos, List<ProdutoUsado> produtos)
         {
             DataInicio = DateTime.Now;
             DataFim = datafim;
@@ -22,6 +24,8 @@ namespace Model
             CustoExtra = custoextra;
             Desconto = desconto;
             IdCliente = idcliente;
+            Servicos = servicos;
+            Produtos = produtos;
 
             DB.Criar("atendimento", this);
         }
@@ -42,11 +46,14 @@ namespace Model
             double custototal,
             string descricao,
             double? custoextra,
-            double? desconto
+            double? desconto,
+            int? idcliente,
+            List<Servico> servicos,
+            List<ProdutoUsado> produtos
 
         )
         {
-            DB.Update("atendimento", indice, datafim, custototal, descricao, custoextra, desconto);
+            DB.Update("atendimento", indice, datafim, custototal, descricao, custoextra, desconto, idcliente, servicos, produtos);
         }
 
         public static void DeletarAtendimento(int indice)
