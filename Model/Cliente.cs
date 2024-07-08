@@ -6,7 +6,7 @@ namespace Model
         public int Id { get; set; }
         public string Nome { get; set; }
         public bool? ClienteNovo { get; set; } = true;
-        public string Contato { get; set; }
+        public string Numero { get; set; }
         public string? Email { get; set; }
 
         public Cliente() { }
@@ -20,9 +20,9 @@ namespace Model
             DB.Criar("cliente", this);
         }
 
-        public static List<Cliente> Sincronizar()
+        public static void Sincronizar()
         {
-            return DB.Sincronizar();
+            DB.Sincronizar();
         }
 
         public static List<Cliente> ListarCliente()
@@ -33,9 +33,9 @@ namespace Model
         public static void AlterarCliente(
             int indice,
             string nome,
-            bool? clientenovo,
-            string contato,
-            string? email
+            string numero,
+            string? email,
+            bool clientenovo
         )
         {
             DB.Update("cliente", indice, nome, numero, email, clientenovo);

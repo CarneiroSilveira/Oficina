@@ -6,22 +6,20 @@ namespace Model
         public int Id { get; set; }
         public string Nome { get; set; }
         public double Preco { get; set; }
-        public int? IdAtendimento { get; set; }
 
 
         public Servico() { }
-        public Servico(string nome, double preco, int? idatendimento)
+        public Servico(string nome, double preco)
         {
             Nome = nome;
             Preco = preco;
-            IdAtendimento = idatendimento;
 
             DB.Criar("servico", this);
         }
 
-        public static List<Servico> Sincronizar()
+        public static void Sincronizar()
         {
-            return DB.Sincronizar();
+            DB.Sincronizar();
         }
 
         public static List<Servico> ListarServico()
