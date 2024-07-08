@@ -16,12 +16,14 @@ namespace Model
         public string Descricao { get; set; }
         public double? CustoExtra { get; set; }
         public double? Desconto { get; set; }
-        public int IdProdutos { get; set; }
-        public int IdServico { get; set; }
-        public List<ProdutoUsado> ProdutosUsados { get; set; }
-
+        public List<Servico> Servicos { get; set; }
+        public List<ProdutoUsado> Produtos { get; set; }
 
         public Atendimento() { }
+
+        public List<ProdutoUsado> ProdutosUsados { get; set; }
+
+        //public Atendimento(DateTime datafim, double custototal, string descricao, double? custoextra, double? desconto, int? idcliente, List<Servico> servicos, List<ProdutoUsado> produtos)
         public Atendimento(DateTime datafim, double custototal, string descricao, double? custoextra, double? desconto, int? idcliente, int idservico, List<ProdutoUsado> produtosusados)
         {
             DataInicio = DateTime.Now;
@@ -31,7 +33,9 @@ namespace Model
             CustoExtra = custoextra;
             Desconto = desconto;
             IdCliente = idcliente;
-            IdServico = idservico;
+            // Servicos = servicos;
+            // Produtos = produtos;
+            // IdServico = idservico;
             ProdutosUsados = produtosusados;
 
             DB.Criar("atendimento", this);
@@ -47,6 +51,21 @@ namespace Model
             return (List<Atendimento>)DB.ListAll("atendimento");
         }
 
+        public static void AlterarAtendimento(
+            int indice,
+            DateTime datafim,
+            double custototal,
+            string descricao,
+            double? custoextra,
+            double? desconto,
+            int? idcliente,
+            List<Servico> servicos,
+            List<ProdutoUsado> produtos
+
+        )
+        {
+            // DB.Update("atendimento", indice, datafim, custototal, descricao, custoextra, desconto, idcliente, servicos, produtos);
+        }
         public static void AlterarAtendimento(int id, DateTime dataFim, double custoTotal, string descricao, double? custoExtra, double? desconto, int idServico, List<ProdutoUsado> produtosUsados)
         {
             Atendimento atendimento = new Atendimento
@@ -57,15 +76,15 @@ namespace Model
                 Descricao = descricao,
                 CustoExtra = custoExtra,
                 Desconto = desconto,
-                IdServico = idServico,
+                // IdServico = idServico,
                 ProdutosUsados = produtosUsados
             };
 
-            DB.Update("atendimento", atendimento);
+            // DB.Update("atendimento", atendimento);
         }
         public static void DeletarAtendimento(int indice)
         {
-            DB.Delete("atendimento", indice);
+            // DB.Delete("atendimento", indice);
         }
     }
 }
