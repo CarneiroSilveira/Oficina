@@ -1,30 +1,22 @@
 using Repo;
 namespace Model
 {
-    public class ProdutoUsado
-    {
-        public int ProdutoId { get; set; }
-        public int Quantidade { get; set; }
-    }
     public class Atendimento
     {
         public int Id { get; set; }
         public DateTime DataInicio { get; set; }
         public DateTime DataFim { get; set; }
-        public int? IdCliente { get; set; }
         public double CustoTotal { get; set; }
         public string Descricao { get; set; }
         public double? CustoExtra { get; set; }
         public double? Desconto { get; set; }
-        public List<Servico> Servicos { get; set; }
-        public List<ProdutoUsado> Produtos { get; set; }
+        public int QuantidadeProduto { get; set; }
+        public List<Servico> ServicosRealizados { get; set; }
+        public List<Produtos> ProdutosUsados { get; set; }
+        public Cliente ClienteAtendido { get; set; }
 
         public Atendimento() { }
-
-        public List<ProdutoUsado> ProdutosUsados { get; set; }
-
-        //public Atendimento(DateTime datafim, double custototal, string descricao, double? custoextra, double? desconto, int? idcliente, List<Servico> servicos, List<ProdutoUsado> produtos)
-        public Atendimento(DateTime datafim, double custototal, string descricao, double? custoextra, double? desconto, int? idcliente, int idservico, List<ProdutoUsado> produtosusados)
+        public Atendimento(DateTime datafim, double custototal, string descricao, double? custoextra, double? desconto, List<Servico> servicos, List<Produtos> produtos, Cliente cliente)
         {
             DataInicio = DateTime.Now;
             DataFim = datafim;
@@ -32,11 +24,10 @@ namespace Model
             Descricao = descricao;
             CustoExtra = custoextra;
             Desconto = desconto;
-            IdCliente = idcliente;
-            // Servicos = servicos;
-            // Produtos = produtos;
-            // IdServico = idservico;
-            ProdutosUsados = produtosusados;
+            ServicosRealizados = servicos;
+            ProdutosUsados = produtos;
+            ClienteAtendido = cliente;
+
 
             DB.Criar("atendimento", this);
         }
@@ -58,15 +49,16 @@ namespace Model
             string descricao,
             double? custoextra,
             double? desconto,
-            int? idcliente,
+            int quantidadeusada,
             List<Servico> servicos,
-            List<ProdutoUsado> produtos
+            List<Produtos> produtos,
+            Cliente cliente
 
         )
         {
             // DB.Update("atendimento", indice, datafim, custototal, descricao, custoextra, desconto, idcliente, servicos, produtos);
         }
-        public static void AlterarAtendimento(int id, DateTime dataFim, double custoTotal, string descricao, double? custoExtra, double? desconto, int idServico, List<ProdutoUsado> produtosUsados)
+        public static void AlterarAtendimento(int id, DateTime dataFim, double custoTotal, string descricao, double? custoExtra, double? desconto, int quantidadeProduto, List<Servico> servicos, List<Produtos> produtos, Cliente cliente)
         {
             Atendimento atendimento = new Atendimento
             {
@@ -76,8 +68,10 @@ namespace Model
                 Descricao = descricao,
                 CustoExtra = custoExtra,
                 Desconto = desconto,
-                // IdServico = idServico,
-                ProdutosUsados = produtosUsados
+                QuantidadeProduto = quantidadeProduto,
+                ServicosRealizados = servicos,
+                ProdutosUsados = produtos,
+                ClienteAtendido = cliente
             };
 
             // DB.Update("atendimento", atendimento);

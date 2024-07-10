@@ -54,31 +54,14 @@ namespace Repo
 
             try
             {
-                // Sincronizar Atendimentos
-                string queryAtendimentos = "SELECT * FROM Atendimento";
-                MySqlCommand commandAtendimentos = new MySqlCommand(queryAtendimentos, conexao);
-                MySqlDataReader readerAtendimentos = commandAtendimentos.ExecuteReader();
-                while (readerAtendimentos.Read())
-                {
-                    Atendimento atendimento = new Atendimento
-                    {
-                        Id = Convert.ToInt32(readerAtendimentos["id"]),
-                        DataInicio = Convert.ToDateTime(readerAtendimentos["DataInicio"]),
-                        DataFim = Convert.ToDateTime(readerAtendimentos["DataFim"]),
-                        IdCliente = Convert.ToInt32(readerAtendimentos["IdCliente"]),
-                        CustoTotal = Convert.ToDouble(readerAtendimentos["CustoTotal"]),
-                        Descricao = readerAtendimentos["Descricao"].ToString(),
-                        CustoExtra = readerAtendimentos["CustoExtra"] == DBNull.Value ? null : (double?)Convert.ToDouble(readerAtendimentos["CustoExtra"]),
-                        Desconto = readerAtendimentos["Desconto"] == DBNull.Value ? null : (double?)Convert.ToDouble(readerAtendimentos["Desconto"]),
-                        IdServico = Convert.ToInt32(readerAtendimentos["IdServico"])
-                    };
+                // Limpar dados anteriores dos modelos
+                servicos.Clear();
+                produtos.Clear();
+                atendimentos.Clear();
+                clientes.Clear();
 
-                    // Sincronizar Produtos Usados no Atendimento
-                    atendimento.ProdutosUsados = ObterProdutosUsadosAtendimento(atendimento.Id);
-
-                    atendimentos.Add(atendimento);
-                }
-                readerAtendimentos.Close();
+                // Sincronizar Atendimentos 
+                ObterAtendimentosComDetalhes();
 
                 // Sincronizar Clientes
                 string queryClientes = "SELECT * FROM Cliente";
@@ -143,32 +126,103 @@ namespace Repo
             }
         }
 
-        private static List<ProdutoUsado> ObterProdutosUsadosAtendimento(int idAtendimento)
+        private static void ObterAtendimentosComDetalhes()
         {
-            List<ProdutoUsado> produtosUsados = new List<ProdutoUsado>();
+            string query = @"
+                SELECT
+                    Atendimento.id AS AtendimentoID,
+                    Atendimento.DataInicio,
+                    Atendimento.DataFim,
+                    Atendimento.CustoTotal,
+                    Atendimento.Descricao,
+                    Atendimento.CustoExtra,
+                    Atendimento.Desconto,
+                    Cliente.id AS ClienteID,
+                    Cliente.Nome AS NomeCliente,
+                    Cliente.Numero AS NumeroCliente,
+                    Cliente.Email AS EmailCliente,
+                    Servico.id AS ServicoID,
+                    Servico.Nome AS NomeServico,
+                    Servico.Preco AS PrecoServico,
+                    Produtos.id AS ProdutoID,
+                    Produtos.Nome AS NomeProduto,
+                    Produtos.Preco AS PrecoProduto,
+                    ServicoProdutos.Quantidade AS QuantidadeProduto
+                FROM
+                    Atendimento
+                JOIN
+                    Cliente ON Atendimento.IdCliente = Cliente.id
+                JOIN
+                    ServicoAtendimento ON Atendimento.id = ServicoAtendimento.idAtendimento
+                JOIN
+                    Servico ON ServicoAtendimento.idServico = Servico.id
+                JOIN
+                    ServicoProdutos ON Atendimento.id = ServicoProdutos.idAtendimento
+                JOIN
+                    Produtos ON ServicoProdutos.idProdutos = Produtos.id;";
 
-            InitConexao();
+            MySqlCommand command = new MySqlCommand(query, conexao);
+            MySqlDataReader reader = command.ExecuteReader();
 
-            string queryProdutosUsados = "SELECT * FROM ServicoProdutos WHERE idAtendimento = @idAtendimento";
-            MySqlCommand commandProdutosUsados = new MySqlCommand(queryProdutosUsados, conexao);
-            commandProdutosUsados.Parameters.AddWithValue("@idAtendimento", idAtendimento);
-            MySqlDataReader readerProdutosUsados = commandProdutosUsados.ExecuteReader();
-            while (readerProdutosUsados.Read())
+            while (reader.Read())
             {
-                ProdutoUsado produtoUsado = new ProdutoUsado
+                int atendimentoId = Convert.ToInt32(reader["AtendimentoID"]);
+
+                Atendimento atendimento = atendimentos.Find(a => a.Id == atendimentoId);
+
+                if (atendimento == null)
                 {
-                    ProdutoId = Convert.ToInt32(readerProdutosUsados["idProdutos"]),
-                    Quantidade = Convert.ToInt32(readerProdutosUsados["Quantidade"])
+                    atendimento = new Atendimento
+                    {
+                        Id = atendimentoId,
+                        DataInicio = Convert.ToDateTime(reader["DataInicio"]),
+                        DataFim = Convert.ToDateTime(reader["DataFim"]),
+                        CustoTotal = Convert.ToDouble(reader["CustoTotal"]),
+                        Descricao = reader["Descricao"].ToString(),
+                        CustoExtra = reader["CustoExtra"] == DBNull.Value ? null : (double?)Convert.ToDouble(reader["CustoExtra"]),
+                        Desconto = reader["Desconto"] == DBNull.Value ? null : (double?)Convert.ToDouble(reader["Desconto"]),
+                        QuantidadeProduto = Convert.ToInt32(reader["QuantidadeProduto"]),
+                        ClienteAtendido = new Cliente
+                        {
+                            Id = Convert.ToInt32(reader["ClienteID"]),
+                            Nome = reader["NomeCliente"].ToString(),
+                            Numero = reader["NumeroCliente"].ToString(),
+                            Email = reader["EmailCliente"] == DBNull.Value ? null : reader["EmailCliente"].ToString()
+                        },
+                        ServicosRealizados = new List<Servico>(),
+                        ProdutosUsados = new List<Produtos>()
+                    };
+
+                    atendimentos.Add(atendimento);
+                }
+
+                Servico servico = new Servico
+                {
+                    Id = Convert.ToInt32(reader["ServicoID"]),
+                    Nome = reader["NomeServico"].ToString(),
+                    Preco = Convert.ToDouble(reader["PrecoServico"])
                 };
 
-                produtosUsados.Add(produtoUsado);
+                if (!atendimento.ServicosRealizados.Exists(s => s.Id == servico.Id))
+                {
+                    atendimento.ServicosRealizados.Add(servico);
+                }
+
+                Produtos produto = new Produtos
+                {
+                    Id = Convert.ToInt32(reader["ProdutoID"]),
+                    Nome = reader["NomeProduto"].ToString(),
+                    Preco = Convert.ToDouble(reader["PrecoProduto"]),
+                };
+
+                if (!atendimento.ProdutosUsados.Exists(p => p.Id == produto.Id))
+                {
+                    atendimento.ProdutosUsados.Add(produto);
+                }
             }
-            readerProdutosUsados.Close();
-            CloseConexao();
 
-            return produtosUsados;
+            reader.Close();
         }
-
         public static void Criar(string table, object schema)
         {
             InitConexao();
@@ -184,7 +238,7 @@ namespace Repo
                 {
                     case "servico":
                         Servico servico = (Servico)schema;
-                        if (servico.Nome == null || servico.Preco <= 0)
+                        if (string.IsNullOrEmpty(servico.Nome) || servico.Preco <= 0)
                         {
                             MessageBox.Show("Nome e preço do serviço são obrigatórios.");
                             break;
@@ -212,7 +266,7 @@ namespace Repo
 
                     case "produtos":
                         Produtos produto = (Produtos)schema;
-                        if (produto.Nome == null || produto.Preco < 0)
+                        if (string.IsNullOrEmpty(produto.Nome) || produto.Preco < 0)
                         {
                             MessageBox.Show("Nome e preço do produto são obrigatórios.");
                             break;
@@ -240,9 +294,9 @@ namespace Repo
 
                     case "atendimento":
                         Atendimento atendimento = (Atendimento)schema;
-                        if (atendimento.Descricao == null || atendimento.CustoExtra < 0 || atendimento.CustoTotal < 0 || atendimento.Desconto < 0)
+                        if (string.IsNullOrEmpty(atendimento.Descricao) || atendimento.CustoTotal < 0)
                         {
-                            MessageBox.Show("Descrição, custo total, custo extra e desconto do atendimento são obrigatórios.");
+                            MessageBox.Show("Descrição e custo total do atendimento são obrigatórios.");
                             break;
                         }
                         else
@@ -250,7 +304,7 @@ namespace Repo
                             command.CommandText = "INSERT INTO Atendimento (DataInicio, DataFim, IdCliente, CustoTotal, Descricao, CustoExtra, Desconto) VALUES (@DataInicio, @DataFim, @IdCliente, @CustoTotal, @Descricao, @CustoExtra, @Desconto)";
                             command.Parameters.AddWithValue("@DataInicio", atendimento.DataInicio);
                             command.Parameters.AddWithValue("@DataFim", atendimento.DataFim);
-                            command.Parameters.AddWithValue("@IdCliente", atendimento.IdCliente);
+                            command.Parameters.AddWithValue("@IdCliente", atendimento.ClienteAtendido?.Id);
                             command.Parameters.AddWithValue("@CustoTotal", atendimento.CustoTotal);
                             command.Parameters.AddWithValue("@Descricao", atendimento.Descricao);
                             command.Parameters.AddWithValue("@CustoExtra", atendimento.CustoExtra);
@@ -261,28 +315,29 @@ namespace Repo
 
                             if (rowsaffected > 0)
                             {
-                                command.CommandText = "INSERT INTO ServicoAtendimento (idServico, idAtendimento) VALUES (@idServico, @idAtendimento)";
-                                command.Parameters.AddWithValue("@idServico", atendimento.IdServico);
-                                command.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
-                                rowsaffected = command.ExecuteNonQuery();
+                                // Inserir os serviços realizados no atendimento
+                                foreach (var servicoRealizado in atendimento.ServicosRealizados)
+                                {
+                                    command.CommandText = "INSERT INTO ServicoAtendimento (idServico, idAtendimento) VALUES (@idServico, @idAtendimento)";
+                                    command.Parameters.Clear();
+                                    command.Parameters.AddWithValue("@idServico", servicoRealizado.Id);
+                                    command.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                                    command.ExecuteNonQuery();
+                                }
 
-                                if (rowsaffected > 0)
+                                // Inserir os produtos usados no atendimento
+                                foreach (var produtoUsado in atendimento.ProdutosUsados)
                                 {
-                                    foreach (var produtoUsado in atendimento.ProdutosUsados)
-                                    {
-                                        command.CommandText = "INSERT INTO ServicoProdutos (idProdutos, idAtendimento, Quantidade) VALUES (@idProdutos, @idAtendimento, @Quantidade)";
-                                        command.Parameters.AddWithValue("@idProdutos", produtoUsado.ProdutoId);
-                                        command.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
-                                        command.Parameters.AddWithValue("@Quantidade", produtoUsado.Quantidade);
-                                        command.ExecuteNonQuery();
-                                    }
-                                    atendimentos.Add(atendimento);
-                                    MessageBox.Show("Atendimento cadastrado com sucesso.");
+                                    command.CommandText = "INSERT INTO ServicoProdutos (idProdutos, idAtendimento, Quantidade) VALUES (@idProdutos, @idAtendimento, @Quantidade)";
+                                    command.Parameters.Clear();
+                                    command.Parameters.AddWithValue("@idProdutos", produtoUsado.Id);
+                                    command.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                                    command.Parameters.AddWithValue("@Quantidade", atendimento.QuantidadeProduto);
+                                    command.ExecuteNonQuery();
                                 }
-                                else
-                                {
-                                    MessageBox.Show("Falha ao adicionar o serviço ao atendimento.");
-                                }
+
+                                atendimentos.Add(atendimento);
+                                MessageBox.Show("Atendimento cadastrado com sucesso.");
                             }
                             else
                             {
@@ -293,7 +348,7 @@ namespace Repo
 
                     case "cliente":
                         Cliente cliente = (Cliente)schema;
-                        if (cliente.Nome == null || cliente.Numero == null)
+                        if (string.IsNullOrEmpty(cliente.Nome) || string.IsNullOrEmpty(cliente.Numero))
                         {
                             MessageBox.Show("Nome e número do cliente são obrigatórios.");
                             break;
@@ -337,5 +392,7 @@ namespace Repo
                 CloseConexao();
             }
         }
+
+
     }
 }
