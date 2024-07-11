@@ -147,7 +147,7 @@ namespace Repo
                     Produtos.id AS ProdutoID,
                     Produtos.Nome AS NomeProduto,
                     Produtos.Preco AS PrecoProduto,
-                    ServicoProdutos.Quantidade AS QuantidadeProduto
+                    AtendimentoProdutos.Quantidade AS QuantidadeProduto
                 FROM
                     Atendimento
                 JOIN
@@ -157,9 +157,9 @@ namespace Repo
                 JOIN
                     Servico ON ServicoAtendimento.idServico = Servico.id
                 JOIN
-                    ServicoProdutos ON Atendimento.id = ServicoProdutos.idAtendimento
+                    AtendimentoProdutos ON Atendimento.id = AtendimentoProdutos.idAtendimento
                 JOIN
-                    Produtos ON ServicoProdutos.idProdutos = Produtos.id;";
+                    Produtos ON AtendimentoProdutos.idProdutos = Produtos.id;";
 
             MySqlCommand command = new MySqlCommand(query, conexao);
             MySqlDataReader reader = command.ExecuteReader();
@@ -181,7 +181,6 @@ namespace Repo
                         Descricao = reader["Descricao"].ToString(),
                         CustoExtra = reader["CustoExtra"] == DBNull.Value ? null : (double?)Convert.ToDouble(reader["CustoExtra"]),
                         Desconto = reader["Desconto"] == DBNull.Value ? null : (double?)Convert.ToDouble(reader["Desconto"]),
-                        QuantidadeProduto = Convert.ToInt32(reader["QuantidadeProduto"]),
                         ClienteAtendido = new Cliente
                         {
                             Id = Convert.ToInt32(reader["ClienteID"]),
@@ -213,6 +212,7 @@ namespace Repo
                     Id = Convert.ToInt32(reader["ProdutoID"]),
                     Nome = reader["NomeProduto"].ToString(),
                     Preco = Convert.ToDouble(reader["PrecoProduto"]),
+                    Quantidade = int.Parse(reader["QuantidadeProduto"].ToString())
                 };
 
                 if (!atendimento.ProdutosUsados.Exists(p => p.Id == produto.Id))
@@ -328,11 +328,11 @@ namespace Repo
                                 // Inserir os produtos usados no atendimento
                                 foreach (var produtoUsado in atendimento.ProdutosUsados)
                                 {
-                                    command.CommandText = "INSERT INTO ServicoProdutos (idProdutos, idAtendimento, Quantidade) VALUES (@idProdutos, @idAtendimento, @Quantidade)";
+                                    command.CommandText = "INSERT INTO AtendimentoProdutos (idProdutos, idAtendimento, Quantidade) VALUES (@idProdutos, @idAtendimento, @Quantidade)";
                                     command.Parameters.Clear();
                                     command.Parameters.AddWithValue("@idProdutos", produtoUsado.Id);
                                     command.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
-                                    command.Parameters.AddWithValue("@Quantidade", atendimento.QuantidadeProduto);
+                                    command.Parameters.AddWithValue("@Quantidade", produtoUsado.Quantidade);
                                     command.ExecuteNonQuery();
                                 }
 
@@ -393,6 +393,55 @@ namespace Repo
             }
         }
 
+        public static void Delete(string table, int indice)
+        {
+            InitConexao();
+            MySqlCommand command = conexao.CreateCommand();
+            MySqlTransaction transaction = null;
 
+            try
+            {
+                transaction = conexao.BeginTransaction();
+                command.Transaction = transaction;
+
+                switch (table.ToLower())
+                {
+                    case "servico":
+                        command.CommandText = "DELETE FROM Servico WHERE id = @Id";
+                        command.Parameters.AddWithValue("@Id", servicos[indice].Id);
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            pessoas.RemoveAt(index);
+                            MessageBox.Show("Pessoa deletada com sucesso.");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Usuário não encontrado.");
+                        }
+                        break;
+                    case "atendimento":
+
+                        break;
+                    case "cliente":
+                        break;
+                    case "produto":
+                        break;
+                    default:
+                        throw new ArgumentException("Tabela inválida");
+                }
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                MessageBox.Show("Erro: " + e.Message);
+            }
+            finally
+            {
+                CloseConexao();
+            }
+
+        }
     }
 }

@@ -1,6 +1,11 @@
 using Repo;
 namespace Model
 {
+    public class ProdutosUsados
+    {
+        public int Id { get; set; }
+        public int Quantidade { get; set; }
+    }
     public class Atendimento
     {
         public int Id { get; set; }
@@ -10,7 +15,6 @@ namespace Model
         public string Descricao { get; set; }
         public double? CustoExtra { get; set; }
         public double? Desconto { get; set; }
-        public int QuantidadeProduto { get; set; }
         public List<Servico> ServicosRealizados { get; set; }
         public List<Produtos> ProdutosUsados { get; set; }
         public Cliente ClienteAtendido { get; set; }
@@ -49,32 +53,13 @@ namespace Model
             string descricao,
             double? custoextra,
             double? desconto,
-            int quantidadeusada,
             List<Servico> servicos,
             List<Produtos> produtos,
             Cliente cliente
 
         )
         {
-            // DB.Update("atendimento", indice, datafim, custototal, descricao, custoextra, desconto, idcliente, servicos, produtos);
-        }
-        public static void AlterarAtendimento(int id, DateTime dataFim, double custoTotal, string descricao, double? custoExtra, double? desconto, int quantidadeProduto, List<Servico> servicos, List<Produtos> produtos, Cliente cliente)
-        {
-            Atendimento atendimento = new Atendimento
-            {
-                Id = id,
-                DataFim = dataFim,
-                CustoTotal = custoTotal,
-                Descricao = descricao,
-                CustoExtra = custoExtra,
-                Desconto = desconto,
-                QuantidadeProduto = quantidadeProduto,
-                ServicosRealizados = servicos,
-                ProdutosUsados = produtos,
-                ClienteAtendido = cliente
-            };
-
-            // DB.Update("atendimento", atendimento);
+            // DB.Update("atendimento", indice, datafim, custototal, descricao, custoextra, desconto, cliente, servicos, produtos);
         }
         public static void DeletarAtendimento(int indice)
         {
