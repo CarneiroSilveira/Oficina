@@ -407,12 +407,12 @@ namespace Repo
                 switch (table.ToLower())
                 {
                     case "servico":
-                        command.CommandText = "DELETE FROM Servico WHERE id = @Id";
+                        command.CommandText = "DELETE FROM servico WHERE id = @Id";
                         command.Parameters.AddWithValue("@Id", servicos[indice].Id);
                         int rowsAffected = command.ExecuteNonQuery();
                         if (rowsAffected > 0)
                         {
-                            pessoas.RemoveAt(index);
+                            servicos.RemoveAt(indice);
                             MessageBox.Show("Pessoa deletada com sucesso.");
                         }
                         else
@@ -445,3 +445,42 @@ namespace Repo
         }
     }
 }
+
+/*-- Deletar registros na tabela de junção ServicoAtendimento
+DELETE FROM ServicoAtendimento WHERE idServico = ?;
+
+-- Deletar o registro na tabela Servico
+DELETE FROM Servico WHERE id = ?;
+*/
+/*-- Deletar registros na tabela de junção ServicoAtendimento
+DELETE FROM ServicoAtendimento WHERE idAtendimento = ?;
+
+-- Deletar registros na tabela de junção AtendimentoProdutos
+DELETE FROM AtendimentoProdutos WHERE idAtendimento = ?;
+
+-- Deletar o registro na tabela Atendimento
+DELETE FROM Atendimento WHERE id = ?;
+*/
+/*-- Deletar registros na tabela de junção AtendimentoProdutos
+DELETE FROM AtendimentoProdutos WHERE idProdutos = ?;
+
+-- Deletar o registro na tabela Produtos
+DELETE FROM Produtos WHERE id = ?;
+*/
+/*-- Primeiro, precisamos deletar todos os atendimentos associados ao cliente
+-- Deletar registros na tabela de junção ServicoAtendimento para cada atendimento do cliente
+DELETE SA FROM ServicoAtendimento SA
+JOIN Atendimento A ON SA.idAtendimento = A.id
+WHERE A.IdCliente = ?;
+
+-- Deletar registros na tabela de junção AtendimentoProdutos para cada atendimento do cliente
+DELETE AP FROM AtendimentoProdutos AP
+JOIN Atendimento A ON AP.idAtendimento = A.id
+WHERE A.IdCliente = ?;
+
+-- Deletar registros na tabela Atendimento para o cliente
+DELETE FROM Atendimento WHERE IdCliente = ?;
+
+-- Deletar o registro na tabela Cliente
+DELETE FROM Cliente WHERE id = ?;
+*/
