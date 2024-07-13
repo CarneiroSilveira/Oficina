@@ -3,8 +3,8 @@ using Model;
 namespace Controller {
     public class ControllerProdutos {
     
-        public static List<Produtos> Sincronizar() {
-            return Produtos.Sincronizar();
+        public static void Sincronizar() {
+            Produtos.Sincronizar();
         }
 
         public static void CriarProduto(string nome, double preco, int quantidade) {
