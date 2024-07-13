@@ -56,7 +56,6 @@ namespace Model
             List<Servico> servicos,
             List<Produtos> produtos,
             Cliente cliente
-
         )
         {
             // DB.Update("atendimento", indice, datafim, custototal, descricao, custoextra, desconto, cliente, servicos, produtos);

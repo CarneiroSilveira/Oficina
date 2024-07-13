@@ -27,11 +27,7 @@ namespace Model
             return (List<Produtos>)DB.ListAll("produtos");
         }
 
-        public static void AlterarProdutos(
-            int indice,
-            string nome,
-            double preco
-        )
+        public static void AlterarProdutos( int indice, string nome, double preco)
         {
             //DB.Update("produtos", indice, nome, preco, quantidade);
         }

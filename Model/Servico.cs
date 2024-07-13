@@ -27,11 +27,7 @@ namespace Model
             return (List<Servico>)DB.ListAll("servico");
         }
 
-        public static void AlterarServico(
-            int indice,
-            string nome,
-            double preco
-        )
+        public static void AlterarServico( int indice, string nome, double preco)
         {
             //DB.Update("servico", indice, nome, preco);
         }

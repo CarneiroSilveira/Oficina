@@ -7,8 +7,8 @@ namespace Controller {
             Cliente.Sincronizar();
         }
 
-        public static void CriarCliente(string nome, string numero, string? email) {
-            new Cliente(nome, numero, email);
+        public static void CriarCliente(string nome, string numero, string? cpf, string? email) {
+            new Cliente(nome, numero, cpf, email);
         }
 
         public static List<Cliente> ListarCliente() {
