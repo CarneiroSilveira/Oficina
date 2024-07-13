@@ -72,9 +72,9 @@ namespace Repo
                     Cliente cliente = new Cliente
                     {
                         Id = Convert.ToInt32(readerClientes["id"]),
-                        Nome = readerClientes["Nome"].ToString(),
+                        Nome = readerClientes["Nome"].ToString() ?? "",
                         ClienteNovo = Convert.ToBoolean(readerClientes["ClienteNovo"]),
-                        Numero = readerClientes["Numero"].ToString(),
+                        Numero = readerClientes["Numero"].ToString() ?? "",
                         Email = readerClientes["Email"] == DBNull.Value ? null : readerClientes["Email"].ToString()
                     };
 
@@ -91,7 +91,7 @@ namespace Repo
                     Produtos produto = new Produtos
                     {
                         Id = Convert.ToInt32(readerProdutos["id"]),
-                        Nome = readerProdutos["Nome"].ToString(),
+                        Nome = readerProdutos["Nome"].ToString() ?? "",
                         Preco = Convert.ToDouble(readerProdutos["Preco"])
                     };
 
@@ -108,7 +108,7 @@ namespace Repo
                     Servico servico = new Servico
                     {
                         Id = Convert.ToInt32(readerServicos["id"]),
-                        Nome = readerServicos["Nome"].ToString(),
+                        Nome = readerServicos["Nome"].ToString() ?? "",
                         Preco = Convert.ToDouble(readerServicos["Preco"])
                     };
 
@@ -178,14 +178,14 @@ namespace Repo
                         DataInicio = Convert.ToDateTime(reader["DataInicio"]),
                         DataFim = Convert.ToDateTime(reader["DataFim"]),
                         CustoTotal = Convert.ToDouble(reader["CustoTotal"]),
-                        Descricao = reader["Descricao"].ToString(),
+                        Descricao = reader["Descricao"].ToString() ?? "",
                         CustoExtra = reader["CustoExtra"] == DBNull.Value ? null : (double?)Convert.ToDouble(reader["CustoExtra"]),
                         Desconto = reader["Desconto"] == DBNull.Value ? null : (double?)Convert.ToDouble(reader["Desconto"]),
                         ClienteAtendido = new Cliente
                         {
                             Id = Convert.ToInt32(reader["ClienteID"]),
-                            Nome = reader["NomeCliente"].ToString(),
-                            Numero = reader["NumeroCliente"].ToString(),
+                            Nome = reader["NomeCliente"].ToString() ?? "",
+                            Numero = reader["NumeroCliente"].ToString() ?? "",
                             Email = reader["EmailCliente"] == DBNull.Value ? null : reader["EmailCliente"].ToString()
                         },
                         ServicosRealizados = new List<Servico>(),
@@ -198,7 +198,7 @@ namespace Repo
                 Servico servico = new Servico
                 {
                     Id = Convert.ToInt32(reader["ServicoID"]),
-                    Nome = reader["NomeServico"].ToString(),
+                    Nome = reader["NomeServico"].ToString() ?? "",
                     Preco = Convert.ToDouble(reader["PrecoServico"])
                 };
 
@@ -210,9 +210,9 @@ namespace Repo
                 Produtos produto = new Produtos
                 {
                     Id = Convert.ToInt32(reader["ProdutoID"]),
-                    Nome = reader["NomeProduto"].ToString(),
+                    Nome = reader["NomeProduto"].ToString() ?? "",
                     Preco = Convert.ToDouble(reader["PrecoProduto"]),
-                    Quantidade = int.Parse(reader["QuantidadeProduto"].ToString())
+                    Quantidade = int.Parse(reader["QuantidadeProduto"].ToString() ?? "")
                 };
 
                 if (!atendimento.ProdutosUsados.Exists(p => p.Id == produto.Id))
@@ -403,13 +403,14 @@ namespace Repo
             {
                 transaction = conexao.BeginTransaction();
                 command.Transaction = transaction;
+                int rowsAffected = command.ExecuteNonQuery();
 
                 switch (table.ToLower())
                 {
                     case "servico":
-                        command.CommandText = "DELETE FROM servico WHERE id = @Id";
+                        command.CommandText = "DELETE FROM ServicoAtendimento WHERE idServico = @Id; DELETE FROM Servico WHERE id = @Id;";
                         command.Parameters.AddWithValue("@Id", servicos[indice].Id);
-                        int rowsAffected = command.ExecuteNonQuery();
+
                         if (rowsAffected > 0)
                         {
                             servicos.RemoveAt(indice);
@@ -421,11 +422,46 @@ namespace Repo
                         }
                         break;
                     case "atendimento":
+                        command.CommandText = "DELETE FROM ServicoAtendimento WHERE idAtendimento = @Id; DELETE FROM AtendimentoProdutos WHERE idAtendimento = @Id; DELETE FROM Atendimento WHERE id = @Id;";
+                        command.Parameters.AddWithValue("@Id", atendimentos[indice].Id);
 
+                        if (rowsAffected > 0)
+                        {
+                            servicos.RemoveAt(indice);
+                            MessageBox.Show("Pessoa deletada com sucesso.");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Usuário não encontrado.");
+                        }
                         break;
                     case "cliente":
+                        command.CommandText = "DELETE SA FROM ServicoAtendimento SA JOIN Atendimento A ON SA.idAtendimento = A.id WHERE A.IdCliente = @Id; DELETE AP FROM AtendimentoProdutos AP JOIN Atendimento A ON AP.idAtendimento = A.id WHERE A.IdCliente = @Id; DELETE FROM Atendimento WHERE IdCliente = @Id; DELETE FROM Cliente WHERE id = @Id;";
+                        command.Parameters.AddWithValue("@Id", produtos[indice].Id);
+
+                        if (rowsAffected > 0)
+                        {
+                            servicos.RemoveAt(indice);
+                            MessageBox.Show("Pessoa deletada com sucesso.");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Usuário não encontrado.");
+                        }
                         break;
                     case "produto":
+                        command.CommandText = "DELETE FROM AtendimentoProdutos WHERE idProdutos = @Id; DELETE FROM Produtos WHERE id = @Id;";
+                        command.Parameters.AddWithValue("@Id", produtos[indice].Id);
+
+                        if (rowsAffected > 0)
+                        {
+                            servicos.RemoveAt(indice);
+                            MessageBox.Show("Pessoa deletada com sucesso.");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Usuário não encontrado.");
+                        }
                         break;
                     default:
                         throw new ArgumentException("Tabela inválida");
