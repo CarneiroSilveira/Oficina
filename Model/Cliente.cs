@@ -5,15 +5,13 @@ namespace Model
     {
         public int Id { get; set; }
         public string Nome { get; set; }
-        public bool? ClienteNovo { get; set; } = true;
         public string Numero { get; set; }
         public string? Email { get; set; }
 
         public Cliente() { }
-        public Cliente(string nome, string numero, string? email, bool? clientenovo)
+        public Cliente(string nome, string numero, string? email)
         {
             Nome = nome;
-            ClienteNovo = clientenovo;
             Numero = numero;
             Email = email;
 
@@ -30,13 +28,7 @@ namespace Model
             return (List<Cliente>)DB.ListAll("cliente");
         }
 
-        public static void AlterarCliente(
-            int indice,
-            string nome,
-            string numero,
-            string? email,
-            bool clientenovo
-        )
+        public static void AlterarCliente( int indice, string nome, string numero, string? email)
         {
             //DB.Update("cliente", indice, nome, numero, email, clientenovo);
         }
