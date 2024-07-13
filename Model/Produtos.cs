@@ -6,7 +6,7 @@ namespace Model
         public int Id { get; set; }
         public string Nome { get; set; }
         public double Preco { get; set; }
-        public int Quantidade { get; set; }
+        public int? Quantidade { get; set; }
 
         public Produtos() { }
         public Produtos(string nome, double preco)
@@ -30,11 +30,10 @@ namespace Model
         public static void AlterarProdutos(
             int indice,
             string nome,
-            double preco,
-            int quantidade
+            double preco
         )
         {
-            DB.Update("produtos", indice, nome, preco, quantidade);
+            //DB.Update("produtos", indice, nome, preco, quantidade);
         }
 
         public static void DeletarProdutos(int indice)

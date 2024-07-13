@@ -63,17 +63,7 @@ namespace Model
         }
         public static void DeletarAtendimento(int indice)
         {
-            // DB.Delete("atendimento", indice);
-        }
-
-        public static DateTime AtendimentosAtivos(List<Atendimento> atendimentos)
-        {
-            List<DateTime> ativos = [];
-            for (int i = 0; i < atendimentos.Count; i++)
-            {
-                TimeSpan difference = atendimentos[i].DataInicio - atendimentos[i].DataFim;
-                ativos = DateTime.Parse(difference.);
-            }
+            DB.Delete("atendimento", indice);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Model
             double preco
         )
         {
-            DB.Update("servico", indice, nome, preco);
+            //DB.Update("servico", indice, nome, preco);
         }
 
         public static void DeletarServico(int indice)

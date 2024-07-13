@@ -38,7 +38,7 @@ namespace Model
             bool clientenovo
         )
         {
-            DB.Update("cliente", indice, nome, numero, email, clientenovo);
+            //DB.Update("cliente", indice, nome, numero, email, clientenovo);
         }
 
         public static void DeletarCliente(int indice)
