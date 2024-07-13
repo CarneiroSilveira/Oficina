@@ -6,13 +6,15 @@ namespace Model
         public int Id { get; set; }
         public string Nome { get; set; }
         public string Numero { get; set; }
+        public string? CPF {get; set;}
         public string? Email { get; set; }
 
         public Cliente() { }
-        public Cliente(string nome, string numero, string? email)
+        public Cliente(string nome, string numero, string? cpf, string? email)
         {
             Nome = nome;
             Numero = numero;
+            CPF = cpf;
             Email = email;
 
             DB.Criar("cliente", this);
