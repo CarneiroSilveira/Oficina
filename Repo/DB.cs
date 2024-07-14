@@ -73,7 +73,7 @@ namespace Repo
                     {
                         Id = Convert.ToInt32(readerClientes["id"]),
                         Nome = readerClientes["Nome"].ToString() ?? "",
-                        ClienteNovo = Convert.ToBoolean(readerClientes["ClienteNovo"]),
+                        CPF = readerClientes["CPF"].ToString(),
                         Numero = readerClientes["Numero"].ToString() ?? "",
                         Email = readerClientes["Email"] == DBNull.Value ? null : readerClientes["Email"].ToString()
                     };
@@ -141,6 +141,7 @@ namespace Repo
                     Cliente.Nome AS NomeCliente,
                     Cliente.Numero AS NumeroCliente,
                     Cliente.Email AS EmailCliente,
+                    Cliente.CPF AS CPFCliente
                     Servico.id AS ServicoID,
                     Servico.Nome AS NomeServico,
                     Servico.Preco AS PrecoServico,
@@ -186,7 +187,8 @@ namespace Repo
                             Id = Convert.ToInt32(reader["ClienteID"]),
                             Nome = reader["NomeCliente"].ToString() ?? "",
                             Numero = reader["NumeroCliente"].ToString() ?? "",
-                            Email = reader["EmailCliente"] == DBNull.Value ? null : reader["EmailCliente"].ToString()
+                            Email = reader["EmailCliente"] == DBNull.Value ? null : reader["EmailCliente"].ToString(),
+                            CPF = reader["CPFCliente"] == DBNull.Value ? null : reader["CPFCliente"].ToString()
                         },
                         ServicosRealizados = new List<Servico>(),
                         ProdutosUsados = new List<Produtos>()
@@ -355,9 +357,10 @@ namespace Repo
                         }
                         else
                         {
-                            command.CommandText = "INSERT INTO Cliente (Nome, ClienteNovo, Numero, Email) VALUES (@Nome, @ClienteNovo, @Numero, @Email)";
+
+                            command.CommandText = "INSERT INTO Cliente (Nome, CPF, Numero, Email) VALUES (@Nome, @CPF, @Numero, @Email)";
                             command.Parameters.AddWithValue("@Nome", cliente.Nome);
-                            command.Parameters.AddWithValue("@ClienteNovo", cliente.ClienteNovo);
+                            command.Parameters.AddWithValue("@CPF", cliente.CPF);
                             command.Parameters.AddWithValue("@Numero", cliente.Numero);
                             command.Parameters.AddWithValue("@Email", cliente.Email);
 
