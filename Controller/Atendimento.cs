@@ -16,7 +16,6 @@ namespace Controller {
         }
 
         public static void AlterarAtendimento(Atendimento atendimento) {
-            List<Atendimento> atendimentos = ListarAtendimento();
             if(atendimento.Id > 0) {
                 Atendimento.AlterarAtendimento(atendimento);
                 Console.WriteLine("Atendimento alterado");

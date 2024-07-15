@@ -16,7 +16,6 @@ namespace Controller {
         }
 
         public static void AlterarServico(Servico servico) {
-            List<Servico> servicos = ListarServico();
             if(servico.Id > 0) {
                 Servico.AlterarServico(servico);
                 Console.WriteLine("Serviço alterado");

@@ -16,8 +16,7 @@ namespace Controller {
         }
 
         public static void AlterarProdutos(Produtos produto) {
-            List<Produtos> produtos = ListarProdutos();
-            if(produto.Id > 0 && produto.Id < produtos.Count) {
+            if(produto.Id > 0) {
                 Produtos.AlterarProdutos(produto);
                 Console.WriteLine("Produto alterado");
             } else {
