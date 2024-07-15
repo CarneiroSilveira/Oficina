@@ -15,10 +15,10 @@ namespace Controller {
             return Atendimento.ListarAtendimento();
         }
 
-        public static void AlterarAtendimento(int indice, DateTime datafim, double custototal, string descricao, double? custoExtra, double? desconto,  List<Servico> servicos, List<Produtos> produtos, Cliente cliente) {
+        public static void AlterarAtendimento(Atendimento atendimento) {
             List<Atendimento> atendimentos = ListarAtendimento();
-            if(indice > 0 && indice < atendimentos.Count) {
-                Atendimento.AlterarAtendimento(indice, datafim, custototal, descricao, custoExtra, desconto, servicos, produtos, cliente);
+            if(atendimento.Id > 0) {
+                Atendimento.AlterarAtendimento(atendimento);
                 Console.WriteLine("Atendimento alterado");
             } else {
                 Console.WriteLine("Indice inválido");

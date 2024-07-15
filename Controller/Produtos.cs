@@ -15,10 +15,10 @@ namespace Controller {
             return Produtos.ListarProdutos();
         }
 
-        public static void AlterarProdutos(int indice, string nome, double preco) {
+        public static void AlterarProdutos(Produtos produto) {
             List<Produtos> produtos = ListarProdutos();
-            if(indice > 0 && indice < produtos.Count) {
-                Produtos.AlterarProdutos(indice, nome, preco);
+            if(produto.Id > 0 && produto.Id < produtos.Count) {
+                Produtos.AlterarProdutos(produto);
                 Console.WriteLine("Produto alterado");
             } else {
                 Console.WriteLine("Indice inválido");
