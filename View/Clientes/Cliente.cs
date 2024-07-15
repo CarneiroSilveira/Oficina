@@ -1,3 +1,6 @@
+using Controller;
+using Model;
+
 namespace Views{
     public class ViewClientes : Form{
         private readonly Label LabelTitulo;
@@ -7,6 +10,8 @@ namespace Views{
         private readonly DataGridView ListaDeClientes;
 
         public ViewClientes(){
+            ControllerCliente.Sincronizar();
+
             Size = new Size(900, 700);
             StartPosition = FormStartPosition.CenterScreen;
             
@@ -51,18 +56,50 @@ namespace Views{
             Controls.Add(ButtonAlterar);
             Controls.Add(ButtonDeletar);
             Controls.Add(ListaDeClientes);
+            Listar();
         }
         private void ClickAdicionar(object? sender, EventArgs e){
             Hide();
             new ViewAdicionarClientes(this).Show();
+            Listar();
+        }
+        private void Listar(){
+            List<Cliente> clientes = ControllerCliente.ListarCliente();
+            ListaDeClientes.Columns.Clear();
+            ListaDeClientes.AutoGenerateColumns = false;
+            ListaDeClientes.DataSource = clientes;
+
+            ListaDeClientes.Columns.Add(new DataGridViewTextBoxColumn {
+            DataPropertyName = "Id",
+            HeaderText = "Id"
+            });
+            ListaDeClientes.Columns.Add(new DataGridViewTextBoxColumn {
+            DataPropertyName = "Nome",
+            HeaderText = "Nome"
+            });
+            ListaDeClientes.Columns.Add(new DataGridViewTextBoxColumn {
+            DataPropertyName = "Numero",
+            HeaderText = "Número"
+            });
+            ListaDeClientes.Columns.Add(new DataGridViewTextBoxColumn {
+            DataPropertyName = "CPF",
+            HeaderText = "CPF"
+            });
+            ListaDeClientes.Columns.Add(new DataGridViewTextBoxColumn {
+            DataPropertyName = "Email",
+            HeaderText = "Email"
+            });
         }
         private void ClickAlterar(object? sender, EventArgs e){
             Hide();
             new ViewAlterarClientes(this).Show();
+            Listar();
         }
         private void ClickDeletar(object? sender, EventArgs e){
-            Hide();
-            new ViewDeletarClientes(this).Show();
+            int index = ListaDeClientes.SelectedRows[0].Index;
+            ControllerCliente.DeletarCliente(index);
+            Listar();
+
         }   
     }
 }

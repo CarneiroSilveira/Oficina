@@ -1,3 +1,5 @@
+using Controller;
+
 namespace Views{
     public class ViewAdicionarServico : Form{
         private readonly Form ParentFormAdicionarServico;
@@ -72,6 +74,7 @@ namespace Views{
                 MessageBox.Show("O TELEFONE ESTÁ VAZIO, COLOQUE O PREÇO DO SERVIÇO");
                 return;
             }
+            ControllerServico.CriarServico(InputNomeServico.Text, double.Parse(InputPreco.Text));
         }
     }
 }
