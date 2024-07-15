@@ -1,3 +1,5 @@
+using Controller;
+
 namespace Views{
     public class ViewAdicionarClientes : Form{
         private readonly Form ParentFormAdicionarClientes;
@@ -110,6 +112,7 @@ namespace Views{
                 MessageBox.Show("O EMAIL ESTÁ VAZIO, COLOQUE O EMAIL DO CLIENTE");
                 return;
             }
+            ControllerCliente.CriarCliente(InputNomeCliente.Text, InputTelefone.Text, InputCPF.Text, InputEmail.Text);
         }
     }
 }

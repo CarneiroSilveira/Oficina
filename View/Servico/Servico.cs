@@ -1,3 +1,6 @@
+using Controller;
+using Model;
+
 namespace Views{
     public class ViewServico : Form{
         private readonly Label LabelTitulo;
@@ -51,18 +54,42 @@ namespace Views{
             Controls.Add(ButtonAlterar);
             Controls.Add(ButtonDeletar);
             Controls.Add(ListaDeServicos);
+            Listar();
         }
         private void ClickAdicionar(object? sender, EventArgs e){
             Hide();
             new ViewAdicionarServico(this).Show();
+            Listar();
+        }
+        private void Listar(){
+            List<Servico> servicos = ControllerServico.ListarServico();
+            
+            ListaDeServicos.Columns.Clear();
+            ListaDeServicos.AutoGenerateColumns = false;
+            ListaDeServicos.DataSource = servicos;
+
+            ListaDeServicos.Columns.Add(new DataGridViewTextBoxColumn {
+                DataPropertyName = "Id",
+                HeaderText = "Id"
+            });
+            ListaDeServicos.Columns.Add(new DataGridViewTextBoxColumn {
+                DataPropertyName = "Nome",
+                HeaderText = "Nome"
+            });
+            ListaDeServicos.Columns.Add(new DataGridViewTextBoxColumn {
+                DataPropertyName = "Preco",
+                HeaderText = "Valor"
+            });
         }
         private void ClickAlterar(object? sender, EventArgs e){
             Hide();
             new ViewAlterarServico(this).Show();
+            Listar();
         }
         private void ClickDeletar(object? sender, EventArgs e){
-            Hide();
-            new ViewDeletarServico(this).Show();
+            int index = ListaDeServicos.SelectedRows[0].Index;
+            ControllerServico.DeletarServico(index);
+            Listar();
         }   
     }
 }
