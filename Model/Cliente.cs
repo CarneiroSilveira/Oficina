@@ -31,7 +31,7 @@ namespace Model
 
         public static List<Cliente> ListarCliente()
         {
-            return (List<Cliente>)DB.ListAll("cliente");
+            return DB.ListAll<Cliente>();
         }
 
         public static async void AlterarCliente(Cliente cliente)
