@@ -6,7 +6,7 @@ namespace Model
         public int Id { get; set; }
         public string Nome { get; set; }
         public string Numero { get; set; }
-        public string? CPF {get; set;}
+        public string? CPF { get; set; }
         public string? Email { get; set; }
 
         public Cliente() { }
@@ -17,12 +17,16 @@ namespace Model
             CPF = cpf;
             Email = email;
 
-            DB.Criar("cliente", this);
+            CriarAsyncModel("cliente", this);
+        }
+        public static async void CriarAsyncModel(string tabela, Cliente cliente)
+        {
+            await DB.CriarAsync(tabela, cliente);
         }
 
-        public static void Sincronizar()
+        public static async void Sincronizar()
         {
-            DB.Sincronizar();
+            await DB.SincronizarAsync();
         }
 
         public static List<Cliente> ListarCliente()
@@ -30,14 +34,14 @@ namespace Model
             return (List<Cliente>)DB.ListAll("cliente");
         }
 
-        public static void AlterarCliente( int indice, string nome, string numero, string? email)
+        public static async void AlterarCliente(Cliente cliente)
         {
-            //DB.Update("cliente", indice, nome, numero, email, clientenovo);
+            await DB.UpdateClienteAsync(cliente);
         }
 
-        public static void DeletarCliente(int indice)
+        public static async void DeletarCliente(int indice)
         {
-            DB.Delete("cliente", indice);
+            await DB.DeletarAsync("cliente", indice);
         }
     }
 }
