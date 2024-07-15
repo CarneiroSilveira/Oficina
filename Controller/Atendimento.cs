@@ -7,7 +7,7 @@ namespace Controller {
             Atendimento.Sincronizar();
         }
 
-        public static void CriarAtendimento(DateTime datafim, double custototal, string descricao, double? custoExtra, double? desconto,  List<Servico> servicos, List<Produtos> produtos, Cliente cliente) {
+        public static void CriarAtendimento(DateTime datafim, double custototal, string? descricao, double? custoExtra, double? desconto,  List<Servico> servicos, List<Produtos> produtos, Cliente cliente) {
             new Atendimento(datafim, custototal, descricao, custoExtra, desconto, servicos, produtos, cliente);
         }
 
