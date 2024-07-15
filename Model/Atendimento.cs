@@ -12,7 +12,7 @@ namespace Model
         public DateTime DataInicio { get; set; }
         public DateTime DataFim { get; set; }
         public double CustoTotal { get; set; }
-        public string Descricao { get; set; }
+        public string? Descricao { get; set; }
         public double? CustoExtra { get; set; }
         public double? Desconto { get; set; }
         public List<Servico> ServicosRealizados { get; set; }
@@ -47,7 +47,7 @@ namespace Model
 
         public static List<Atendimento> ListarAtendimento()
         {
-            return (List<Atendimento>)DB.ListAll("atendimento");
+            return DB.ListAll<Atendimento>();
         }
 
         public static async void AlterarAtendimento(Atendimento atendimento)

@@ -11,20 +11,27 @@ namespace Repo
         public static List<Atendimento> atendimentos { get; set; } = new List<Atendimento>();
         public static List<Cliente> clientes { get; set; } = new List<Cliente>();
 
-        public static object ListAll(string table)
+        public static List<T> ListAll<T>()
         {
-            switch (table.ToLower())
+            if (typeof(T) == typeof(Servico))
             {
-                case "servicos":
-                    return servicos;
-                case "produtos":
-                    return produtos;
-                case "atendimentos":
-                    return atendimentos;
-                case "clientes":
-                    return clientes;
-                default:
-                    throw new ArgumentException("Tabela inválida");
+                return servicos as List<T>;
+            }
+            else if (typeof(T) == typeof(Produtos))
+            {
+                return produtos as List<T>;
+            }
+            else if (typeof(T) == typeof(Atendimento))
+            {
+                return atendimentos as List<T>;
+            }
+            else if (typeof(T) == typeof(Cliente))
+            {
+                return clientes as List<T>;
+            }
+            else
+            {
+                throw new ArgumentException("Tipo inválido. Erro em ListAll.");
             }
         }
 
@@ -54,10 +61,10 @@ namespace Repo
             try
             {
                 // Limpar dados anteriores dos modelos
-                servicos.Clear();
-                produtos.Clear();
-                atendimentos.Clear();
-                clientes.Clear();
+                // servicos.Clear();
+                // produtos.Clear();
+                // atendimentos.Clear();
+                // clientes.Clear();
 
                 // Sincronizar Atendimentos 
                 await ObterAtendimentosComDetalhesAsync();
@@ -381,7 +388,7 @@ namespace Repo
                         }
 
                     default:
-                        throw new ArgumentException("Tabela inválida");
+                        throw new ArgumentException("Tabela inválida Erro em CriarAsync");
                 }
 
                 await transaction.CommitAsync();
@@ -475,7 +482,7 @@ namespace Repo
                         break;
 
                     default:
-                        throw new ArgumentException("Tabela inválida");
+                        throw new ArgumentException("Tabela inválida Erro em Deletar Async");
                 }
 
                 await transaction.CommitAsync();

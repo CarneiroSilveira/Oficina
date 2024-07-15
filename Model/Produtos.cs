@@ -27,7 +27,7 @@ namespace Model
 
         public static List<Produtos> ListarProdutos()
         {
-            return (List<Produtos>)DB.ListAll("produtos");
+            return DB.ListAll<Produtos>();
         }
 
         public static async void AlterarProdutos(Produtos produto)

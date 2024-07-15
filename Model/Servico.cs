@@ -28,7 +28,7 @@ namespace Model
 
         public static List<Servico> ListarServico()
         {
-            return (List<Servico>)DB.ListAll("servico");
+            return DB.ListAll<Servico>();
         }
 
         public static async void AlterarServico(Servico servico)
