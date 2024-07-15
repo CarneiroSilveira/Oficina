@@ -16,7 +16,6 @@ namespace Controller {
         }
 
         public static void AlterarCliente(Cliente cliente) {
-            List<Cliente> clientes = ListarCliente();
             if(cliente.Id > 0) {
                 Cliente.AlterarCliente(cliente);
                 Console.WriteLine("Cliente alterado");
