@@ -14,12 +14,15 @@ namespace Model
             Nome = nome;
             Preco = preco;
 
-            DB.Criar("produtos", this);
+            CriarAsyncModel("produtos", this);
         }
-
-        public static void Sincronizar()
+        public static async void CriarAsyncModel(string tabela, Produtos produto)
         {
-            DB.Sincronizar();
+            await DB.CriarAsync(tabela, produto);
+        }
+        public static async void Sincronizar()
+        {
+            await DB.SincronizarAsync();
         }
 
         public static List<Produtos> ListarProdutos()
@@ -27,14 +30,14 @@ namespace Model
             return (List<Produtos>)DB.ListAll("produtos");
         }
 
-        public static void AlterarProdutos( int indice, string nome, double preco)
+        public static async void AlterarProdutos(Produtos produto)
         {
-            //DB.Update("produtos", indice, nome, preco, quantidade);
+            await DB.UpdateProdutoAsync(produto);
         }
 
-        public static void DeletarProdutos(int indice)
+        public static async void DeletarProdutos(int indice)
         {
-            DB.Delete("produtos", indice);
+            await DB.DeletarAsync("produtos", indice);
         }
     }
 }
