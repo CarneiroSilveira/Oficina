@@ -15,10 +15,10 @@ namespace Controller {
             return Cliente.ListarCliente();
         }
 
-        public static void AlterarCliente(int indice, string nome, string contato, string? email) {
+        public static void AlterarCliente(Cliente cliente) {
             List<Cliente> clientes = ListarCliente();
-            if(indice > 0 && indice < clientes.Count) {
-                Cliente.AlterarCliente(indice, nome, contato, email);
+            if(cliente.Id > 0) {
+                Cliente.AlterarCliente(cliente);
                 Console.WriteLine("Cliente alterado");
             } else {
                 Console.WriteLine("Indice inválido");

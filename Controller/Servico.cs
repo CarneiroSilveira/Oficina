@@ -15,10 +15,10 @@ namespace Controller {
             return Servico.ListarServico();
         }
 
-        public static void AlterarServico(int indice, string nome, double preco) {
+        public static void AlterarServico(Servico servico) {
             List<Servico> servicos = ListarServico();
-            if(indice > 0 && indice < servicos.Count) {
-                Servico.AlterarServico(indice, nome, preco);
+            if(servico.Id > 0) {
+                Servico.AlterarServico(servico);
                 Console.WriteLine("Serviço alterado");
             } else {
                 Console.WriteLine("Indice inválido");
