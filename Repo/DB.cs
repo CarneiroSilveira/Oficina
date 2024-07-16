@@ -61,10 +61,10 @@ namespace Repo
             try
             {
                 // Limpar dados anteriores dos modelos
-                // servicos.Clear();
-                // produtos.Clear();
-                // atendimentos.Clear();
-                // clientes.Clear();
+                servicos.Clear();
+                produtos.Clear();
+                atendimentos.Clear();
+                clientes.Clear();
 
                 // Sincronizar Atendimentos 
                 await ObterAtendimentosComDetalhesAsync();
@@ -79,7 +79,7 @@ namespace Repo
                     {
                         Id = Convert.ToInt32(readerClientes["id"]),
                         Nome = readerClientes["Nome"].ToString() ?? "",
-                        CPF = readerClientes["CPF"].ToString(),
+                        CPF = readerClientes["CPF"] == DBNull.Value ? null : readerClientes["CPF"].ToString(),
                         Numero = readerClientes["Numero"].ToString() ?? "",
                         Email = readerClientes["Email"] == DBNull.Value ? null : readerClientes["Email"].ToString()
                     };
