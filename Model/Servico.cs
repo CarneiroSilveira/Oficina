@@ -14,16 +14,11 @@ namespace Model
             Nome = nome;
             Preco = preco;
 
-            CriarAsyncModel("servico", this);
+            DB.Criar(this);
         }
-        public static async void CriarAsyncModel(string tabela, Servico servico)
+        public static void Sincronizar()
         {
-            await DB.CriarAsync(tabela, servico);
-        }
-
-        public static async void Sincronizar()
-        {
-            await DB.SincronizarAsync();
+            DB.Sincronizar();
         }
 
         public static List<Servico> ListarServico()
@@ -31,14 +26,14 @@ namespace Model
             return DB.ListAll<Servico>();
         }
 
-        public static async void AlterarServico(Servico servico)
+        public static void AlterarServico(Servico servico)
         {
-            await DB.UpdateServicoAsync(servico);
+            DB.Update(servico);
         }
 
-        public static async void DeletarServico(int indice)
+        public static void DeletarServico(int indice)
         {
-            await DB.DeletarAsync("servico", indice);
+            DB.Delete("servico", indice);
         }
     }
 }

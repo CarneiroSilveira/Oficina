@@ -6,10 +6,10 @@ namespace Repo
     {
         private static MySqlConnection conexao;
 
-        public static List<Servico> servicos { get; set; } = new List<Servico>();
-        public static List<Produtos> produtos { get; set; } = new List<Produtos>();
-        public static List<Atendimento> atendimentos { get; set; } = new List<Atendimento>();
-        public static List<Cliente> clientes { get; set; } = new List<Cliente>();
+        public static List<Servico> servicos { get; set; } = [];
+        public static List<Produtos> produtos { get; set; } = [];
+        public static List<Atendimento> atendimentos { get; set; } = [];
+        public static List<Cliente> clientes { get; set; } = [];
 
         public static List<T> ListAll<T>()
         {
@@ -35,13 +35,13 @@ namespace Repo
             }
         }
 
-        public static async Task InitConexaoAsync()
+        public static void InitConexao()
         {
             string info = "server=localhost;database=oficina;user id=root;password=''";
             conexao = new MySqlConnection(info);
             try
             {
-                await conexao.OpenAsync();
+                conexao.Open();
             }
             catch
             {
@@ -49,14 +49,14 @@ namespace Repo
             }
         }
 
-        public static async Task CloseConexaoAsync()
+        public static void CloseConexao()
         {
-            await conexao.CloseAsync();
+            conexao.Close();
         }
 
-        public static async Task SincronizarAsync()
+        public static void Sincronizar()
         {
-            await InitConexaoAsync();
+            InitConexao();
 
             try
             {
@@ -67,13 +67,13 @@ namespace Repo
                 clientes.Clear();
 
                 // Sincronizar Atendimentos 
-                await ObterAtendimentosComDetalhesAsync();
+                ObterAtendimentosComDetalhes();
 
                 // Sincronizar Clientes
                 string queryClientes = "SELECT * FROM Cliente";
                 MySqlCommand commandClientes = new MySqlCommand(queryClientes, conexao);
-                MySqlDataReader readerClientes = await commandClientes.ExecuteReaderAsync();
-                while (await readerClientes.ReadAsync())
+                MySqlDataReader readerClientes = commandClientes.ExecuteReader();
+                while (readerClientes.Read())
                 {
                     Cliente cliente = new Cliente
                     {
@@ -86,13 +86,13 @@ namespace Repo
 
                     clientes.Add(cliente);
                 }
-                await readerClientes.CloseAsync();
+                readerClientes.Close();
 
                 // Sincronizar Produtos
                 string queryProdutos = "SELECT * FROM Produtos";
                 MySqlCommand commandProdutos = new MySqlCommand(queryProdutos, conexao);
-                MySqlDataReader readerProdutos = await commandProdutos.ExecuteReaderAsync();
-                while (await readerProdutos.ReadAsync())
+                MySqlDataReader readerProdutos = commandProdutos.ExecuteReader();
+                while (readerProdutos.Read())
                 {
                     Produtos produto = new Produtos
                     {
@@ -103,13 +103,13 @@ namespace Repo
 
                     produtos.Add(produto);
                 }
-                await readerProdutos.CloseAsync();
+                readerProdutos.Close();
 
                 // Sincronizar Serviços
                 string queryServicos = "SELECT * FROM Servico";
                 MySqlCommand commandServicos = new MySqlCommand(queryServicos, conexao);
-                MySqlDataReader readerServicos = await commandServicos.ExecuteReaderAsync();
-                while (await readerServicos.ReadAsync())
+                MySqlDataReader readerServicos = commandServicos.ExecuteReader();
+                while (readerServicos.Read())
                 {
                     Servico servico = new Servico
                     {
@@ -120,7 +120,7 @@ namespace Repo
 
                     servicos.Add(servico);
                 }
-                await readerServicos.CloseAsync();
+                readerServicos.Close();
             }
             catch (Exception ex)
             {
@@ -128,11 +128,11 @@ namespace Repo
             }
             finally
             {
-                await CloseConexaoAsync();
+                CloseConexao();
             }
         }
 
-        private static async Task ObterAtendimentosComDetalhesAsync()
+        private static void ObterAtendimentosComDetalhes()
         {
             string query = @"
                 SELECT
@@ -169,9 +169,9 @@ namespace Repo
                     Produtos ON AtendimentoProdutos.idProdutos = Produtos.id;";
 
             MySqlCommand command = new MySqlCommand(query, conexao);
-            MySqlDataReader reader = await command.ExecuteReaderAsync();
+            MySqlDataReader reader = command.ExecuteReader();
 
-            while (await reader.ReadAsync())
+            while (reader.Read())
             {
                 int atendimentoId = Convert.ToInt32(reader["AtendimentoID"]);
 
@@ -229,23 +229,23 @@ namespace Repo
                 }
             }
 
-            await reader.CloseAsync();
+            reader.Close();
         }
 
-        public static async Task CriarAsync(string table, object schema)
+        public static void Criar(object schema)
         {
-            await InitConexaoAsync();
+            InitConexao();
             MySqlCommand command = conexao.CreateCommand();
             MySqlTransaction transaction = null;
 
             try
             {
-                transaction = await conexao.BeginTransactionAsync();
+                transaction = conexao.BeginTransaction();
                 command.Transaction = transaction;
 
-                switch (table.ToLower())
+                switch (schema)
                 {
-                    case "servico":
+                    case Servico:
                         Servico servico = (Servico)schema;
                         if (string.IsNullOrEmpty(servico.Nome) || servico.Preco <= 0)
                         {
@@ -258,7 +258,7 @@ namespace Repo
                             command.Parameters.AddWithValue("@Nome", servico.Nome);
                             command.Parameters.AddWithValue("@Preco", servico.Preco);
 
-                            int rowsaffected = await command.ExecuteNonQueryAsync();
+                            int rowsaffected = command.ExecuteNonQuery();
                             servico.Id = Convert.ToInt32(command.LastInsertedId);
 
                             if (rowsaffected > 0)
@@ -273,7 +273,7 @@ namespace Repo
                             break;
                         }
 
-                    case "produtos":
+                    case Produtos:
                         Produtos produto = (Produtos)schema;
                         if (string.IsNullOrEmpty(produto.Nome) || produto.Preco < 0)
                         {
@@ -286,7 +286,7 @@ namespace Repo
                             command.Parameters.AddWithValue("@Nome", produto.Nome);
                             command.Parameters.AddWithValue("@Preco", produto.Preco);
 
-                            int rowsaffected = await command.ExecuteNonQueryAsync();
+                            int rowsaffected = command.ExecuteNonQuery();
                             produto.Id = Convert.ToInt32(command.LastInsertedId);
 
                             if (rowsaffected > 0)
@@ -301,11 +301,11 @@ namespace Repo
                             break;
                         }
 
-                    case "clientes":
+                    case Cliente:
                         Cliente cliente = (Cliente)schema;
-                        if (string.IsNullOrEmpty(cliente.Nome) || string.IsNullOrEmpty(cliente.CPF) || string.IsNullOrEmpty(cliente.Numero))
+                        if (string.IsNullOrEmpty(cliente.Nome) || string.IsNullOrEmpty(cliente.Numero))
                         {
-                            MessageBox.Show("Nome, CPF e número de contato do cliente são obrigatórios.");
+                            MessageBox.Show("Nome e número do cliente são obrigatórios.");
                             break;
                         }
                         else
@@ -316,7 +316,7 @@ namespace Repo
                             command.Parameters.AddWithValue("@Numero", cliente.Numero);
                             command.Parameters.AddWithValue("@Email", cliente.Email);
 
-                            int rowsaffected = await command.ExecuteNonQueryAsync();
+                            int rowsaffected = command.ExecuteNonQuery();
                             cliente.Id = Convert.ToInt32(command.LastInsertedId);
 
                             if (rowsaffected > 0)
@@ -331,54 +331,48 @@ namespace Repo
                             break;
                         }
 
-                    case "atendimento":
+                    case Atendimento:
                         Atendimento atendimento = (Atendimento)schema;
-                        if (atendimento.CustoTotal < 0 || atendimento.ClienteAtendido == null)
+                        if (atendimento.ClienteAtendido == null || atendimento.ServicosRealizados == null || atendimento.ServicosRealizados.Count == 0)
                         {
-                            MessageBox.Show("Data de início, data de fim, custo total e cliente atendido são obrigatórios.");
+                            MessageBox.Show("O atendimento deve ter um cliente e pelo menos um serviço.");
                             break;
                         }
                         else
                         {
-                            command.CommandText = @"INSERT INTO Atendimento (DataInicio, DataFim, CustoTotal, Descricao, CustoExtra, Desconto, IdCliente) 
-                                                    VALUES (@DataInicio, @DataFim, @CustoTotal, @Descricao, @CustoExtra, @Desconto, @IdCliente)";
+                            command.CommandText = "INSERT INTO Atendimento (IdCliente, DataInicio, DataFim, CustoTotal, Descricao, CustoExtra, Desconto) VALUES (@IdCliente, @DataInicio, @DataFim, @CustoTotal, @Descricao, @CustoExtra, @Desconto)";
+                            command.Parameters.AddWithValue("@IdCliente", atendimento.ClienteAtendido.Id);
                             command.Parameters.AddWithValue("@DataInicio", atendimento.DataInicio);
                             command.Parameters.AddWithValue("@DataFim", atendimento.DataFim);
                             command.Parameters.AddWithValue("@CustoTotal", atendimento.CustoTotal);
                             command.Parameters.AddWithValue("@Descricao", atendimento.Descricao);
                             command.Parameters.AddWithValue("@CustoExtra", atendimento.CustoExtra);
                             command.Parameters.AddWithValue("@Desconto", atendimento.Desconto);
-                            command.Parameters.AddWithValue("@IdCliente", atendimento.ClienteAtendido.Id);
 
-                            int rowsaffected = await command.ExecuteNonQueryAsync();
+                            int rowsaffected = command.ExecuteNonQuery();
                             atendimento.Id = Convert.ToInt32(command.LastInsertedId);
 
                             if (rowsaffected > 0)
                             {
+                                foreach (Servico servic0 in atendimento.ServicosRealizados)
+                                {
+                                    MySqlCommand commandServico = new MySqlCommand("INSERT INTO ServicoAtendimento (idAtendimento, idServico) VALUES (@idAtendimento, @idServico)", conexao, transaction);
+                                    commandServico.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                                    commandServico.Parameters.AddWithValue("@idServico", servic0.Id);
+                                    commandServico.ExecuteNonQuery();
+                                }
+
+                                foreach (Produtos produt0 in atendimento.ProdutosUsados)
+                                {
+                                    MySqlCommand commandProduto = new MySqlCommand("INSERT INTO AtendimentoProdutos (idAtendimento, idProdutos, Quantidade) VALUES (@idAtendimento, @idProdutos, @Quantidade)", conexao, transaction);
+                                    commandProduto.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                                    commandProduto.Parameters.AddWithValue("@idProdutos", produt0.Id);
+                                    commandProduto.Parameters.AddWithValue("@Quantidade", produt0.Quantidade);
+                                    commandProduto.ExecuteNonQuery();
+                                }
+
                                 MessageBox.Show("Atendimento cadastrado com sucesso.");
                                 atendimentos.Add(atendimento);
-
-                                // Adicionar serviços e produtos relacionados ao atendimento
-                                foreach (var servicoRel in atendimento.ServicosRealizados)
-                                {
-                                    command.CommandText = "INSERT INTO ServicoAtendimento (IdServico, IdAtendimento) VALUES (@IdServico, @IdAtendimento)";
-                                    command.Parameters.Clear();
-                                    command.Parameters.AddWithValue("@IdServico", servicoRel.Id);
-                                    command.Parameters.AddWithValue("@IdAtendimento", atendimento.Id);
-
-                                    await command.ExecuteNonQueryAsync();
-                                }
-
-                                foreach (var produtoRel in atendimento.ProdutosUsados)
-                                {
-                                    command.CommandText = "INSERT INTO AtendimentoProdutos (IdProdutos, IdAtendimento, Quantidade) VALUES (@IdProdutos, @IdAtendimento, @Quantidade)";
-                                    command.Parameters.Clear();
-                                    command.Parameters.AddWithValue("@IdProdutos", produtoRel.Id);
-                                    command.Parameters.AddWithValue("@IdAtendimento", atendimento.Id);
-                                    command.Parameters.AddWithValue("@Quantidade", produtoRel.Quantidade);
-
-                                    await command.ExecuteNonQueryAsync();
-                                }
                             }
                             else
                             {
@@ -388,47 +382,233 @@ namespace Repo
                         }
 
                     default:
-                        throw new ArgumentException("Tabela inválida Erro em CriarAsync");
+                        MessageBox.Show("Tabela não reconhecida.");
+                        break;
                 }
 
-                await transaction.CommitAsync();
+                transaction.Commit();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erro ao inserir dados: " + ex.Message);
-                if (transaction != null)
+                try
                 {
-                    await transaction.RollbackAsync();
+                    transaction.Rollback();
                 }
+                catch
+                {
+                    // Ignorar erros de rollback
+                }
+
+                MessageBox.Show("Erro ao adicionar registro: " + ex.Message);
             }
             finally
             {
-                await CloseConexaoAsync();
+                CloseConexao();
             }
         }
 
-        public static async Task DeletarAsync(string table, int id)
+        public static void Update(object schema)
         {
-            await InitConexaoAsync();
-
+            InitConexao();
             MySqlCommand command = conexao.CreateCommand();
             MySqlTransaction transaction = null;
 
             try
             {
-                transaction = await conexao.BeginTransactionAsync();
+                transaction = conexao.BeginTransaction();
+                command.Transaction = transaction;
+
+                switch (schema)
+                {
+                    case Servico:
+                        Servico servico = (Servico)schema;
+                        command.CommandText = "UPDATE Servico SET Nome = @Nome, Preco = @Preco WHERE id = @id";
+                        command.Parameters.AddWithValue("@Nome", servico.Nome);
+                        command.Parameters.AddWithValue("@Preco", servico.Preco);
+                        command.Parameters.AddWithValue("@id", servico.Id);
+
+                        int rowsaffectedServico = command.ExecuteNonQuery();
+                        if (rowsaffectedServico > 0)
+                        {
+                            MessageBox.Show("Serviço atualizado com sucesso.");
+                            Servico servicoExistente = servicos.FirstOrDefault(s => s.Id == servico.Id);
+                            if (servicoExistente != null)
+                            {
+                                servicoExistente.Nome = servico.Nome;
+                                servicoExistente.Preco = servico.Preco;
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Falha ao atualizar o serviço.");
+                        }
+                        break;
+
+                    case Produtos:
+                        Produtos produto = (Produtos)schema;
+                        command.CommandText = "UPDATE Produtos SET Nome = @Nome, Preco = @Preco WHERE id = @id";
+                        command.Parameters.AddWithValue("@Nome", produto.Nome);
+                        command.Parameters.AddWithValue("@Preco", produto.Preco);
+                        command.Parameters.AddWithValue("@id", produto.Id);
+
+                        int rowsaffectedProduto = command.ExecuteNonQuery();
+                        if (rowsaffectedProduto > 0)
+                        {
+                            MessageBox.Show("Produto atualizado com sucesso.");
+                            Produtos produtoExistente = produtos.FirstOrDefault(p => p.Id == produto.Id);
+                            if (produtoExistente != null)
+                            {
+                                produtoExistente.Nome = produto.Nome;
+                                produtoExistente.Preco = produto.Preco;
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Falha ao atualizar o produto.");
+                        }
+                        break;
+
+                    case Cliente:
+                        Cliente cliente = (Cliente)schema;
+                        command.CommandText = "UPDATE Cliente SET Nome = @Nome, CPF = @CPF, Numero = @Numero, Email = @Email WHERE id = @id";
+                        command.Parameters.AddWithValue("@Nome", cliente.Nome);
+                        command.Parameters.AddWithValue("@CPF", cliente.CPF);
+                        command.Parameters.AddWithValue("@Numero", cliente.Numero);
+                        command.Parameters.AddWithValue("@Email", cliente.Email);
+                        command.Parameters.AddWithValue("@id", cliente.Id);
+
+                        int rowsaffectedCliente = command.ExecuteNonQuery();
+                        if (rowsaffectedCliente > 0)
+                        {
+                            MessageBox.Show("Cliente atualizado com sucesso.");
+                            Cliente clienteExistente = clientes.FirstOrDefault(c => c.Id == cliente.Id);
+                            if (clienteExistente != null)
+                            {
+                                clienteExistente.Nome = cliente.Nome;
+                                clienteExistente.CPF = cliente.CPF;
+                                clienteExistente.Numero = cliente.Numero;
+                                clienteExistente.Email = cliente.Email;
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Falha ao atualizar o cliente.");
+                        }
+                        break;
+
+                    case Atendimento:
+                        Atendimento atendimento = (Atendimento)schema;
+                        command.CommandText = "UPDATE Atendimento SET IdCliente = @IdCliente, DataInicio = @DataInicio, DataFim = @DataFim, CustoTotal = @CustoTotal, Descricao = @Descricao, CustoExtra = @CustoExtra, Desconto = @Desconto WHERE id = @id";
+                        command.Parameters.AddWithValue("@IdCliente", atendimento.ClienteAtendido.Id);
+                        command.Parameters.AddWithValue("@DataInicio", atendimento.DataInicio);
+                        command.Parameters.AddWithValue("@DataFim", atendimento.DataFim);
+                        command.Parameters.AddWithValue("@CustoTotal", atendimento.CustoTotal);
+                        command.Parameters.AddWithValue("@Descricao", atendimento.Descricao);
+                        command.Parameters.AddWithValue("@CustoExtra", atendimento.CustoExtra);
+                        command.Parameters.AddWithValue("@Desconto", atendimento.Desconto);
+                        command.Parameters.AddWithValue("@id", atendimento.Id);
+
+                        int rowsaffectedAtendimento = command.ExecuteNonQuery();
+                        if (rowsaffectedAtendimento > 0)
+                        {
+                            MySqlCommand commandDeleteServicos = new MySqlCommand("DELETE FROM ServicoAtendimento WHERE idAtendimento = @idAtendimento", conexao, transaction);
+                            commandDeleteServicos.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                            commandDeleteServicos.ExecuteNonQuery();
+
+                            foreach (Servico servic0 in atendimento.ServicosRealizados)
+                            {
+                                MySqlCommand commandServico = new MySqlCommand("INSERT INTO ServicoAtendimento (idAtendimento, idServico) VALUES (@idAtendimento, @idServico)", conexao, transaction);
+                                commandServico.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                                commandServico.Parameters.AddWithValue("@idServico", servic0.Id);
+                                commandServico.ExecuteNonQuery();
+                            }
+
+                            MySqlCommand commandDeleteProdutos = new MySqlCommand("DELETE FROM AtendimentoProdutos WHERE idAtendimento = @idAtendimento", conexao, transaction);
+                            commandDeleteProdutos.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                            commandDeleteProdutos.ExecuteNonQuery();
+
+                            foreach (Produtos produt0 in atendimento.ProdutosUsados)
+                            {
+                                MySqlCommand commandProduto = new MySqlCommand("INSERT INTO AtendimentoProdutos (idAtendimento, idProdutos, Quantidade) VALUES (@idAtendimento, @idProdutos, @Quantidade)", conexao, transaction);
+                                commandProduto.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                                commandProduto.Parameters.AddWithValue("@idProdutos", produt0.Id);
+                                commandProduto.Parameters.AddWithValue("@Quantidade", produt0.Quantidade);
+                                commandProduto.ExecuteNonQuery();
+                            }
+
+                            MessageBox.Show("Atendimento atualizado com sucesso.");
+                            Atendimento atendimentoExistente = atendimentos.FirstOrDefault(a => a.Id == atendimento.Id);
+                            if (atendimentoExistente != null)
+                            {
+                                atendimentoExistente.ClienteAtendido = atendimento.ClienteAtendido;
+                                atendimentoExistente.DataInicio = atendimento.DataInicio;
+                                atendimentoExistente.DataFim = atendimento.DataFim;
+                                atendimentoExistente.CustoTotal = atendimento.CustoTotal;
+                                atendimentoExistente.Descricao = atendimento.Descricao;
+                                atendimentoExistente.CustoExtra = atendimento.CustoExtra;
+                                atendimentoExistente.Desconto = atendimento.Desconto;
+                                atendimentoExistente.ServicosRealizados = atendimento.ServicosRealizados;
+                                atendimentoExistente.ProdutosUsados = atendimento.ProdutosUsados;
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Falha ao atualizar o atendimento.");
+                        }
+                        break;
+
+                    default:
+                        MessageBox.Show("Tabela não reconhecida.");
+                        break;
+                }
+
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch
+                {
+                    // Ignorar erros de rollback
+                }
+
+                MessageBox.Show("Erro ao atualizar registro: " + ex.Message);
+            }
+            finally
+            {
+                CloseConexao();
+            }
+        }
+
+        public static void Delete(string table, int id)
+        {
+            InitConexao();
+            MySqlCommand command = conexao.CreateCommand();
+            MySqlTransaction transaction = null;
+
+            try
+            {
+                transaction = conexao.BeginTransaction();
                 command.Transaction = transaction;
 
                 switch (table.ToLower())
                 {
-                    case "servico":
-                        command.CommandText = "DELETE FROM Servico WHERE id = @Id";
-                        command.Parameters.AddWithValue("@Id", id);
-                        int servicoRows = await command.ExecuteNonQueryAsync();
-                        if (servicoRows > 0)
+                    case "serviço":
+                        command.CommandText = "DELETE FROM Servico WHERE id = @id";
+                        command.Parameters.AddWithValue("@id", id);
+
+                        int rowsaffectedServico = command.ExecuteNonQuery();
+                        if (rowsaffectedServico > 0)
                         {
-                            servicos.RemoveAll(s => s.Id == id);
                             MessageBox.Show("Serviço excluído com sucesso.");
+                            Servico servicoExistente = servicos.FirstOrDefault(s => s.Id == id);
+                            if (servicoExistente != null)
+                            {
+                                servicos.Remove(servicoExistente);
+                            }
                         }
                         else
                         {
@@ -436,14 +616,19 @@ namespace Repo
                         }
                         break;
 
-                    case "produtos":
-                        command.CommandText = "DELETE FROM Produtos WHERE id = @Id";
-                        command.Parameters.AddWithValue("@Id", id);
-                        int produtoRows = await command.ExecuteNonQueryAsync();
-                        if (produtoRows > 0)
+                    case "produto":
+                        command.CommandText = "DELETE FROM Produtos WHERE id = @id";
+                        command.Parameters.AddWithValue("@id", id);
+
+                        int rowsaffectedProduto = command.ExecuteNonQuery();
+                        if (rowsaffectedProduto > 0)
                         {
-                            produtos.RemoveAll(p => p.Id == id);
                             MessageBox.Show("Produto excluído com sucesso.");
+                            Produtos produtoExistente = produtos.FirstOrDefault(p => p.Id == id);
+                            if (produtoExistente != null)
+                            {
+                                produtos.Remove(produtoExistente);
+                            }
                         }
                         else
                         {
@@ -451,14 +636,19 @@ namespace Repo
                         }
                         break;
 
-                    case "clientes":
-                        command.CommandText = "DELETE FROM Cliente WHERE id = @Id";
-                        command.Parameters.AddWithValue("@Id", id);
-                        int clienteRows = await command.ExecuteNonQueryAsync();
-                        if (clienteRows > 0)
+                    case "cliente":
+                        command.CommandText = "DELETE FROM Cliente WHERE id = @id";
+                        command.Parameters.AddWithValue("@id", id);
+
+                        int rowsaffectedCliente = command.ExecuteNonQuery();
+                        if (rowsaffectedCliente > 0)
                         {
-                            clientes.RemoveAll(c => c.Id == id);
                             MessageBox.Show("Cliente excluído com sucesso.");
+                            Cliente clienteExistente = clientes.FirstOrDefault(c => c.Id == id);
+                            if (clienteExistente != null)
+                            {
+                                clientes.Remove(clienteExistente);
+                            }
                         }
                         else
                         {
@@ -467,13 +657,26 @@ namespace Repo
                         break;
 
                     case "atendimento":
-                        command.CommandText = "DELETE FROM Atendimento WHERE id = @Id";
-                        command.Parameters.AddWithValue("@Id", id);
-                        int atendimentoRows = await command.ExecuteNonQueryAsync();
-                        if (atendimentoRows > 0)
+                        command.CommandText = "DELETE FROM Atendimento WHERE id = @id";
+                        command.Parameters.AddWithValue("@id", id);
+
+                        int rowsaffectedAtendimento = command.ExecuteNonQuery();
+                        if (rowsaffectedAtendimento > 0)
                         {
-                            atendimentos.RemoveAll(a => a.Id == id);
+                            MySqlCommand commandDeleteServicos = new MySqlCommand("DELETE FROM ServicoAtendimento WHERE idAtendimento = @idAtendimento", conexao, transaction);
+                            commandDeleteServicos.Parameters.AddWithValue("@idAtendimento", id);
+                            commandDeleteServicos.ExecuteNonQuery();
+
+                            MySqlCommand commandDeleteProdutos = new MySqlCommand("DELETE FROM AtendimentoProdutos WHERE idAtendimento = @idAtendimento", conexao, transaction);
+                            commandDeleteProdutos.Parameters.AddWithValue("@idAtendimento", id);
+                            commandDeleteProdutos.ExecuteNonQuery();
+
                             MessageBox.Show("Atendimento excluído com sucesso.");
+                            Atendimento atendimentoExistente = atendimentos.FirstOrDefault(a => a.Id == id);
+                            if (atendimentoExistente != null)
+                            {
+                                atendimentos.Remove(atendimentoExistente);
+                            }
                         }
                         else
                         {
@@ -482,231 +685,28 @@ namespace Repo
                         break;
 
                     default:
-                        throw new ArgumentException("Tabela inválida Erro em Deletar Async");
+                        MessageBox.Show("Tabela não reconhecida.");
+                        break;
                 }
 
-                await transaction.CommitAsync();
+                transaction.Commit();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erro ao deletar dados: " + ex.Message);
-                if (transaction != null)
+                try
                 {
-                    await transaction.RollbackAsync();
+                    transaction.Rollback();
                 }
+                catch
+                {
+                    // Ignorar erros de rollback
+                }
+
+                MessageBox.Show("Erro ao excluir registro: " + ex.Message);
             }
             finally
             {
-                await CloseConexaoAsync();
-            }
-        }
-
-        public static async Task UpdateAtendimentoAsync(Atendimento atendimento)
-        {
-            await InitConexaoAsync();
-
-            MySqlCommand command = conexao.CreateCommand();
-            MySqlTransaction transaction = null;
-
-            try
-            {
-                transaction = await conexao.BeginTransactionAsync();
-                command.Transaction = transaction;
-
-                command.CommandText = @"UPDATE Atendimento SET DataInicio = @DataInicio, DataFim = @DataFim, CustoTotal = @CustoTotal, Descricao = @Descricao, CustoExtra = @CustoExtra, Desconto = @Desconto, IdCliente = @IdCliente 
-                                        WHERE id = @Id";
-                command.Parameters.AddWithValue("@DataInicio", atendimento.DataInicio);
-                command.Parameters.AddWithValue("@DataFim", atendimento.DataFim);
-                command.Parameters.AddWithValue("@CustoTotal", atendimento.CustoTotal);
-                command.Parameters.AddWithValue("@Descricao", atendimento.Descricao);
-                command.Parameters.AddWithValue("@CustoExtra", atendimento.CustoExtra);
-                command.Parameters.AddWithValue("@Desconto", atendimento.Desconto);
-                command.Parameters.AddWithValue("@IdCliente", atendimento.ClienteAtendido.Id);
-                command.Parameters.AddWithValue("@Id", atendimento.Id);
-
-                int rowsaffected = await command.ExecuteNonQueryAsync();
-
-                if (rowsaffected > 0)
-                {
-                    // Atualizar serviços e produtos relacionados ao atendimento
-                    command.CommandText = "DELETE FROM ServicoAtendimento WHERE IdAtendimento = @Id";
-                    await command.ExecuteNonQueryAsync();
-
-                    foreach (var servico in atendimento.ServicosRealizados)
-                    {
-                        command.CommandText = "INSERT INTO ServicoAtendimento (IdServico, IdAtendimento) VALUES (@IdServico, @IdAtendimento)";
-                        command.Parameters.Clear();
-                        command.Parameters.AddWithValue("@IdServico", servico.Id);
-                        command.Parameters.AddWithValue("@IdAtendimento", atendimento.Id);
-
-                        await command.ExecuteNonQueryAsync();
-                    }
-
-                    command.CommandText = "DELETE FROM AtendimentoProdutos WHERE IdAtendimento = @Id";
-                    await command.ExecuteNonQueryAsync();
-
-                    foreach (var produto in atendimento.ProdutosUsados)
-                    {
-                        command.CommandText = "INSERT INTO AtendimentoProdutos (IdProdutos, IdAtendimento, Quantidade) VALUES (@IdProdutos, @IdAtendimento, @Quantidade)";
-                        command.Parameters.Clear();
-                        command.Parameters.AddWithValue("@IdProdutos", produto.Id);
-                        command.Parameters.AddWithValue("@IdAtendimento", atendimento.Id);
-                        command.Parameters.AddWithValue("@Quantidade", produto.Quantidade);
-
-                        await command.ExecuteNonQueryAsync();
-                    }
-
-                    MessageBox.Show("Atendimento atualizado com sucesso.");
-                }
-                else
-                {
-                    MessageBox.Show("Falha ao atualizar o atendimento.");
-                }
-
-                await transaction.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Erro ao atualizar atendimento: " + ex.Message);
-                if (transaction != null)
-                {
-                    await transaction.RollbackAsync();
-                }
-            }
-            finally
-            {
-                await CloseConexaoAsync();
-            }
-        }
-        public static async Task UpdateProdutoAsync(Produtos produto)
-        {
-            await InitConexaoAsync();
-
-            MySqlCommand command = conexao.CreateCommand();
-            MySqlTransaction transaction = null;
-
-            try
-            {
-                transaction = await conexao.BeginTransactionAsync();
-                command.Transaction = transaction;
-
-                command.CommandText = @"UPDATE Produtos SET Nome = @Nome, Preco = @Preco WHERE id = @Id";
-                command.Parameters.AddWithValue("@Nome", produto.Nome);
-                command.Parameters.AddWithValue("@Preco", produto.Preco);
-                command.Parameters.AddWithValue("@Id", produto.Id);
-
-                int rowsaffected = await command.ExecuteNonQueryAsync();
-
-                if (rowsaffected > 0)
-                {
-                    MessageBox.Show("Produto atualizado com sucesso.");
-                }
-                else
-                {
-                    MessageBox.Show("Falha ao atualizar o produto.");
-                }
-
-                await transaction.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Erro ao atualizar produto: " + ex.Message);
-                if (transaction != null)
-                {
-                    await transaction.RollbackAsync();
-                }
-            }
-            finally
-            {
-                await CloseConexaoAsync();
-            }
-        }
-        public static async Task UpdateClienteAsync(Cliente cliente)
-        {
-            await InitConexaoAsync();
-
-            MySqlCommand command = conexao.CreateCommand();
-            MySqlTransaction transaction = null;
-
-            try
-            {
-                transaction = await conexao.BeginTransactionAsync();
-                command.Transaction = transaction;
-
-                command.CommandText = @"UPDATE Cliente SET Nome = @Nome, CPF = @CPF, Numero = @Numero, Email = @Email WHERE id = @Id";
-                command.Parameters.AddWithValue("@Nome", cliente.Nome);
-                command.Parameters.AddWithValue("@CPF", cliente.CPF);
-                command.Parameters.AddWithValue("@Numero", cliente.Numero);
-                command.Parameters.AddWithValue("@Email", cliente.Email);
-                command.Parameters.AddWithValue("@Id", cliente.Id);
-
-                int rowsaffected = await command.ExecuteNonQueryAsync();
-
-                if (rowsaffected > 0)
-                {
-                    MessageBox.Show("Cliente atualizado com sucesso.");
-                }
-                else
-                {
-                    MessageBox.Show("Falha ao atualizar o cliente.");
-                }
-
-                await transaction.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Erro ao atualizar cliente: " + ex.Message);
-                if (transaction != null)
-                {
-                    await transaction.RollbackAsync();
-                }
-            }
-            finally
-            {
-                await CloseConexaoAsync();
-            }
-        }
-        public static async Task UpdateServicoAsync(Servico servico)
-        {
-            await InitConexaoAsync();
-
-            MySqlCommand command = conexao.CreateCommand();
-            MySqlTransaction transaction = null;
-
-            try
-            {
-                transaction = await conexao.BeginTransactionAsync();
-                command.Transaction = transaction;
-
-                command.CommandText = @"UPDATE Servico SET Nome = @Nome, Preco = @Preco WHERE id = @Id";
-                command.Parameters.AddWithValue("@Nome", servico.Nome);
-                command.Parameters.AddWithValue("@Preco", servico.Preco);
-                command.Parameters.AddWithValue("@Id", servico.Id);
-
-                int rowsaffected = await command.ExecuteNonQueryAsync();
-
-                if (rowsaffected > 0)
-                {
-                    MessageBox.Show("Serviço atualizado com sucesso.");
-                }
-                else
-                {
-                    MessageBox.Show("Falha ao atualizar o serviço.");
-                }
-
-                await transaction.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Erro ao atualizar serviço: " + ex.Message);
-                if (transaction != null)
-                {
-                    await transaction.RollbackAsync();
-                }
-            }
-            finally
-            {
-                await CloseConexaoAsync();
+                CloseConexao();
             }
         }
     }

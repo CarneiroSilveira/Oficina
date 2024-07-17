@@ -17,16 +17,12 @@ namespace Model
             CPF = cpf;
             Email = email;
 
-            CriarAsyncModel("cliente", this);
-        }
-        public static async void CriarAsyncModel(string tabela, Cliente cliente)
-        {
-            await DB.CriarAsync(tabela, cliente);
+            DB.Criar(this);
         }
 
-        public static async void Sincronizar()
+        public static void Sincronizar()
         {
-            await DB.SincronizarAsync();
+            DB.Sincronizar();
         }
 
         public static List<Cliente> ListarCliente()
@@ -34,14 +30,14 @@ namespace Model
             return DB.ListAll<Cliente>();
         }
 
-        public static async void AlterarCliente(Cliente cliente)
+        public static void AlterarCliente(Cliente cliente)
         {
-            await DB.UpdateClienteAsync(cliente);
+            DB.Update(cliente);
         }
 
-        public static async void DeletarCliente(int indice)
+        public static void DeletarCliente(int indice)
         {
-            await DB.DeletarAsync("cliente", indice);
+            DB.Delete("cliente", indice);
         }
     }
 }
