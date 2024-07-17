@@ -33,16 +33,11 @@ namespace Model
             ClienteAtendido = cliente;
 
 
-            CriarAsyncModel("atendimento", this);
+            DB.Criar(this);
         }
-        public static async void CriarAsyncModel(string tabela, Atendimento atendimento)
+        public static void Sincronizar()
         {
-            await DB.CriarAsync(tabela, atendimento);
-        }
-
-        public static async void Sincronizar()
-        {
-            await DB.SincronizarAsync();
+            DB.Sincronizar();
         }
 
         public static List<Atendimento> ListarAtendimento()
@@ -50,13 +45,13 @@ namespace Model
             return DB.ListAll<Atendimento>();
         }
 
-        public static async void AlterarAtendimento(Atendimento atendimento)
+        public static void AlterarAtendimento(Atendimento atendimento)
         {
-            await DB.UpdateAtendimentoAsync(atendimento);
+            DB.Update(atendimento);
         }
-        public static async void DeletarAtendimento(int indice)
+        public static void DeletarAtendimento(int indice)
         {
-            await DB.DeletarAsync("atendimento", indice);
+            DB.Delete("atendimento", indice);
         }
     }
 }
