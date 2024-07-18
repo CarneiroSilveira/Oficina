@@ -15,7 +15,7 @@ namespace Views
         private readonly TextBox InputEmail;
         private readonly Button ButtonFechar;
         private readonly Button ButtonConfirmar;
-
+        public event EventHandler clienteAdicionado; // Evento para notificar adição de cliente
         public ViewAdicionarClientes(Form parent)
         {
             ParentFormAdicionarClientes = parent;
@@ -121,17 +121,10 @@ namespace Views
                 MessageBox.Show("O TELEFONE ESTÁ VAZIO, COLOQUE O TELEFONE DO CLIENTE");
                 return;
             }
-            if (InputCPF.Text == "")
-            {
-                MessageBox.Show("O CPF ESTÁ VAZIO, COLOQUE O CPF DO CLIENTE");
-                return;
-            }
-            if (InputEmail.Text == "")
-            {
-                MessageBox.Show("O EMAIL ESTÁ VAZIO, COLOQUE O EMAIL DO CLIENTE");
-                return;
-            }
             ControllerCliente.CriarCliente(InputNomeCliente.Text, InputTelefone.Text, InputCPF.Text, InputEmail.Text);
+            clienteAdicionado?.Invoke(this, EventArgs.Empty); // Disparar evento de cliente adicionado
+            Close();
+            ParentFormAdicionarClientes.Show();
         }
     }
 }

@@ -31,6 +31,7 @@ namespace Views{
                 Size = new Size(350, 60),
                 Font = new Font("Arial", 20)
             };
+            ButtonProdutos.Click += ClickEntrarProdutos;
 
             ButtonAtendimentos = new Button(){
                 Text = "Atendimentos",
@@ -60,6 +61,10 @@ namespace Views{
         private void ClickEntrarServicos(object? sender, EventArgs e){
             Hide();
             new ViewServico().Show();
+        }
+        private void ClickEntrarProdutos(object? sender, EventArgs e){
+            Hide();
+            new ViewProdutos().Show();
         }
         private void ClickSair(object? sender, EventArgs e){
             Close();

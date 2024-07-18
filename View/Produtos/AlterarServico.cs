@@ -1,19 +1,20 @@
 using Controller;
 
 namespace Views{
-    public class ViewAlterarServico : Form{
-        private readonly Form ParentFormAlterarServico;
+    public class ViewAlterarProdutos : Form{
+        private readonly Form ParentFormAlterarProduto;
         private readonly Label LabelIndice;
-        private readonly Label LabelNomeServico;
+        private readonly Label LabelNomeProduto;
         private readonly Label LabelPreco;
         private readonly TextBox InputIndice;
-        private readonly TextBox InputNomeServico;
+        private readonly TextBox InputNomeProduto;
         private readonly TextBox InputPreco;
         private readonly Button ButtonFechar;
         private readonly Button ButtonConfirmar;
-        public event EventHandler ServicoAlterado; // Evento para notificar edição de serviço
-        public ViewAlterarServico(Form parent){
-            ParentFormAlterarServico = parent;
+        public event EventHandler produtoAlterado; // Evento para notificar edição produto
+
+        public ViewAlterarProdutos(Form parent){
+            ParentFormAlterarProduto = parent;
             
             StartPosition = FormStartPosition.CenterScreen;
             Size = new Size(700, 320);
@@ -24,7 +25,7 @@ namespace Views{
                 Font = new Font("Arial", 16),
                 Size = new Size(115, 30)
             };
-            LabelNomeServico = new Label(){
+            LabelNomeProduto = new Label(){
                 Text = "NOME:",
                 Location = new Point(100, 70),
                 Font = new Font("Arial", 16),
@@ -41,7 +42,7 @@ namespace Views{
                 Location = new Point(220, 27),
                 Size = new Size(350, 40)
             };
-            InputNomeServico = new TextBox(){
+            InputNomeProduto = new TextBox(){
                 Name = "Nome Servico",
                 Location = new Point(220, 72),
                 Size = new Size(350, 40)
@@ -68,36 +69,36 @@ namespace Views{
             ButtonConfirmar.Click += ClickConfirmar;
 
             Controls.Add(LabelIndice);
-            Controls.Add(LabelNomeServico);
+            Controls.Add(LabelNomeProduto);
             Controls.Add(LabelPreco);
             Controls.Add(InputIndice);
-            Controls.Add(InputNomeServico);
+            Controls.Add(InputNomeProduto);
             Controls.Add(InputPreco);
             Controls.Add(ButtonFechar);
             Controls.Add(ButtonConfirmar);           
         }
         private void ClickFechar(object? sender, EventArgs e){
             Close();
-            ParentFormAlterarServico.Show();
+            ParentFormAlterarProduto.Show();
         }
         private void ClickConfirmar(object? sender, EventArgs e){
+
             if (InputIndice.Text == ""){
                 MessageBox.Show("O ÍNDICE ESTÁ VAZIO, COLOQUE O ÍNDICE DA TABELA");
                 return;
             }
-            if (InputNomeServico.Text == ""){
-                MessageBox.Show("O NOME ESTÁ VAZIO, COLOQUE O NOME DO SERVIÇO");
+            if (InputNomeProduto.Text == ""){
+                MessageBox.Show("O NOME ESTÁ VAZIO, COLOQUE O NOME DO PRODUTO");
                 return;
             }
             if (InputPreco.Text == ""){
-                MessageBox.Show("O TELEFONE ESTÁ VAZIO, COLOQUE O PREÇO DO SERVIÇO");
+                MessageBox.Show("O VALOR ESTÁ VAZIO, COLOQUE O VALOR DO PRODUTO");
                 return;
             }
-            // ControllerServico.AlterarServico(InputIndice.Text, InputNomeServico.Text, Convert.ToDouble(InputPreco.Text));
-            ServicoAlterado?.Invoke(this, EventArgs.Empty); // Disparar evento de serviço alterado
+            //ControllerProdutos.AlterarProdutos(InputIndice.Text, InputNomeProduto.Text, Convert.ToDouble(InputPreco.Text));
+            produtoAlterado?.Invoke(this, EventArgs.Empty); // Disparar evento de produto alterado
             Close();
-            ParentFormAlterarServico.Show();
-
+            ParentFormAlterarProduto.Show();
         }
     }
 }
