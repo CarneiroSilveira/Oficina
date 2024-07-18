@@ -1,3 +1,5 @@
+using Controller;
+
 namespace Views{
     public class ViewAlterarClientes : Form{
         private readonly Form ParentFormAlterarClientes;
@@ -13,7 +15,7 @@ namespace Views{
         private readonly TextBox InputEmail;
         private readonly Button ButtonFechar;
         private readonly Button ButtonConfirmar;
-
+        public event EventHandler clienteAlterado; // Evento para notificar edição de clientes
         public ViewAlterarClientes(Form parent){
             ParentFormAlterarClientes = parent;
             
@@ -121,14 +123,10 @@ namespace Views{
                 MessageBox.Show("O TELEFONE ESTÁ VAZIO, COLOQUE O TELEFONE DO CLIENTE");
                 return;
             }
-            if (InputCPF.Text == ""){
-                MessageBox.Show("O CPF ESTÁ VAZIO, COLOQUE O CPF DO CLIENTE");
-                return;
-            }
-            if (InputEmail.Text == ""){
-                MessageBox.Show("O EMAIL ESTÁ VAZIO, COLOQUE O EMAIL DO CLIENTE");
-                return;
-            }
+            //ControllerCliente.AlterarCliente(InputIndice.Text, InputNomeCliente.Text, Convert.ToDouble(InputTelefone.Text));
+            clienteAlterado?.Invoke(this, EventArgs.Empty); // Disparar evento de cliente alterado
+            Close();
+            ParentFormAlterarClientes.Show();
         }
     }
 }

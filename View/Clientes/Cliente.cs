@@ -47,7 +47,10 @@ namespace Views{
 
             ListaDeClientes = new DataGridView(){
                 Location = new Point(50, 200),
-                Size = new Size(780, 320)
+                Size = new Size(780, 320),
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                ReadOnly = true,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect
             };
 
 
@@ -59,9 +62,10 @@ namespace Views{
             Listar();
         }
         private void ClickAdicionar(object? sender, EventArgs e){
+            var viewAdicioanarCliente = new ViewAdicionarClientes(this);
+            viewAdicioanarCliente.clienteAdicionado += (c, args) => Listar(); // Escutar o evento
             Hide();
-            new ViewAdicionarClientes(this).Show();
-            Listar();
+            viewAdicioanarCliente.Show();
         }
         private void Listar(){
             List<Cliente> clientes = ControllerCliente.ListarCliente();
@@ -91,9 +95,10 @@ namespace Views{
             });
         }
         private void ClickAlterar(object? sender, EventArgs e){
+            var viewAlterarCliente = new ViewAlterarClientes(this);
+            viewAlterarCliente.clienteAlterado += (c, args) => Listar(); // Escutar o evento
             Hide();
-            new ViewAlterarClientes(this).Show();
-            Listar();
+            viewAlterarCliente.Show();
         }
         private void ClickDeletar(object? sender, EventArgs e){
             int index = ListaDeClientes.SelectedRows[0].Index;

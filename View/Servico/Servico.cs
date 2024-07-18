@@ -59,7 +59,10 @@ namespace Views
             ListaDeServicos = new DataGridView()
             {
                 Location = new Point(50, 200),
-                Size = new Size(780, 320)
+                Size = new Size(780, 320),
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                ReadOnly = true,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect
             };
 
             Controls.Add(LabelTitulo);
@@ -105,9 +108,10 @@ namespace Views
 
         private void ClickAlterar(object? sender, EventArgs e)
         {
+            var viewAlterarServico = new ViewAlterarServico(this);
+            viewAlterarServico.ServicoAlterado += (s, args) => Listar(); // Escutar o evento
             Hide();
-            new ViewAlterarServico(this).Show();
-            Listar();
+            viewAlterarServico.Show();
         }
 
         private void ClickDeletar(object? sender, EventArgs e)
