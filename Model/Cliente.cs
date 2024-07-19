@@ -16,10 +16,12 @@ namespace Model
             Numero = numero;
             CPF = cpf;
             Email = email;
-
-            DB.Criar(this);
         }
 
+        public static void CriarCliente(Cliente cliente)
+        {
+            DB.Criar(cliente);
+        }
         public static void Sincronizar()
         {
             DB.Sincronizar();

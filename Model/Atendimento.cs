@@ -1,11 +1,6 @@
 using Repo;
 namespace Model
 {
-    public class ProdutosUsados
-    {
-        public int Id { get; set; }
-        public int Quantidade { get; set; }
-    }
     public class Atendimento
     {
         public int Id { get; set; }
@@ -20,7 +15,7 @@ namespace Model
         public Cliente ClienteAtendido { get; set; }
 
         public Atendimento() { }
-        public Atendimento(DateTime datafim, double custototal, string descricao, double? custoextra, double? desconto, List<Servico> servicos, List<Produtos> produtos, Cliente cliente)
+        public Atendimento(DateTime datafim, double custototal, string? descricao, double? custoextra, double? desconto, List<Servico> servicos, List<Produtos> produtos, Cliente cliente)
         {
             DataInicio = DateTime.Now;
             DataFim = datafim;
@@ -31,9 +26,10 @@ namespace Model
             ServicosRealizados = servicos;
             ProdutosUsados = produtos;
             ClienteAtendido = cliente;
-
-
-            DB.Criar(this);
+        }
+        public static void CriarAtendimento(Atendimento atendimento)
+        {
+            DB.Criar(atendimento);
         }
         public static void Sincronizar()
         {

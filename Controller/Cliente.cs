@@ -1,37 +1,57 @@
 using Model;
 
-namespace Controller {
-    public class ControllerCliente {
-    
-        public static void Sincronizar() {
+namespace Controller
+{
+    public class ControllerCliente
+    {
+
+        public static void Sincronizar()
+        {
             Cliente.Sincronizar();
         }
 
-        public static void CriarCliente(string nome, string numero, string? cpf, string? email) {
-            new Cliente(nome, numero, cpf, email);
+        public static void CriarCliente(string nome, string numero, string? cpf, string? email)
+        {
+            Cliente cliente = new Cliente(nome, numero, cpf, email);
+            Cliente.CriarCliente(cliente);
         }
 
-        public static List<Cliente> ListarCliente() {
+        public static List<Cliente> ListarCliente()
+        {
             return Cliente.ListarCliente();
         }
 
-        public static void AlterarCliente(Cliente cliente) {
-            if(cliente.Id > 0) {
+        public static void AlterarCliente(int indice, string nome, string numero, string? cpf, string? email)
+        {
+            Cliente cliente = new Cliente(nome, numero, cpf, email)
+            {
+                Id = indice + 1
+            };
+            if (cliente.Id > 0)
+            {
                 Cliente.AlterarCliente(cliente);
                 Console.WriteLine("Cliente alterado");
-            } else {
+            }
+            else
+            {
                 Console.WriteLine("Indice inválido");
             }
-        } 
+        }
 
-        public static void DeletarCliente(int indice) {
+        public static void DeletarCliente(int indice)
+        {
             List<Cliente> clientes = ListarCliente();
 
-            if (indice >= 0 && indice < clientes.Count) {{
-                Cliente.DeletarCliente(indice);
-            }} else {
+            if (indice >= 0 && indice < clientes.Count)
+            {
+                {
+                    Cliente.DeletarCliente(indice);
+                }
+            }
+            else
+            {
                 Console.WriteLine("Indice inválido");
             }
-        } 
+        }
     }
 }
