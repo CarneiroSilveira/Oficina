@@ -24,6 +24,8 @@ namespace Views{
         public ViewAtendimentos(){
             Size = new Size(900, 850);
             StartPosition = FormStartPosition.CenterScreen;
+            BackColor = Color.DimGray;
+
             LabelTitulo = new Label(){
                 Text = "MENU DE ATENDIMENTO",
                 Location = new Point(190, 100),
@@ -105,7 +107,8 @@ namespace Views{
                 Text = "ADICIONAR",
                 Location = new Point(50, 700),
                 Font = new Font("Arial", 16),
-                Size = new Size(200, 70)
+                Size = new Size(200, 70),
+                BackColor = Color.GhostWhite
             };
 
             ButtonAlterar = new Button()
@@ -113,14 +116,16 @@ namespace Views{
                 Text = "ALTERAR",
                 Location = new Point(333, 700),
                 Font = new Font("Arial", 16),
-                Size = new Size(200, 70)
+                Size = new Size(200, 70),
+                BackColor = Color.GhostWhite
             };
             ButtonDeletar = new Button()
             {
                 Text = "DELETAR",
                 Location = new Point(633, 700),
                 Font = new Font("Arial", 16),
-                Size = new Size(200, 70)
+                Size = new Size(200, 70),
+                BackColor = Color.GhostWhite
             };
             ListaDeAtendimentos = new DataGridView(){
                 Location = new Point (50, 460),
