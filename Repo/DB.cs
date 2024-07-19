@@ -596,9 +596,15 @@ namespace Repo
 
                 switch (table.ToLower())
                 {
-                    case "serviço":
+                    case "servico":
+                        // Excluir referências em ServicoAtendimento
+                        MySqlCommand commandDeleteServicoAtendimento = new MySqlCommand("DELETE FROM ServicoAtendimento WHERE idServico = @idServico", conexao, transaction);
+                        commandDeleteServicoAtendimento.Parameters.AddWithValue("@idServico", servicos[id].Id);
+                        commandDeleteServicoAtendimento.ExecuteNonQuery();
+
+                        // Agora exclua o Servico
                         command.CommandText = "DELETE FROM Servico WHERE id = @id";
-                        command.Parameters.AddWithValue("@id", id);
+                        command.Parameters.AddWithValue("@id", servicos[id].Id);
 
                         int rowsaffectedServico = command.ExecuteNonQuery();
                         if (rowsaffectedServico > 0)
@@ -617,8 +623,14 @@ namespace Repo
                         break;
 
                     case "produto":
+                        // Excluir referências em AtendimentoProdutos
+                        MySqlCommand commandDeleteAtendimentoProdutos = new MySqlCommand("DELETE FROM AtendimentoProdutos WHERE idProdutos = @idProduto", conexao, transaction);
+                        commandDeleteAtendimentoProdutos.Parameters.AddWithValue("@idProduto", produtos[id].Id);
+                        commandDeleteAtendimentoProdutos.ExecuteNonQuery();
+
+                        // Agora exclua o Produto
                         command.CommandText = "DELETE FROM Produtos WHERE id = @id";
-                        command.Parameters.AddWithValue("@id", id);
+                        command.Parameters.AddWithValue("@id", produtos[id].Id);
 
                         int rowsaffectedProduto = command.ExecuteNonQuery();
                         if (rowsaffectedProduto > 0)
@@ -637,8 +649,23 @@ namespace Repo
                         break;
 
                     case "cliente":
+                        // Excluir referências em Atendimento antes de excluir Cliente
+                        MySqlCommand commandDeleteAtendimentos = new MySqlCommand("DELETE FROM Atendimento WHERE IdCliente = @idCliente", conexao, transaction);
+                        commandDeleteAtendimentos.Parameters.AddWithValue("@idCliente", clientes[id].Id);
+                        commandDeleteAtendimentos.ExecuteNonQuery();
+
+                        MySqlCommand commandDeleteServicos1 = new MySqlCommand("DELETE FROM ServicoAtendimento WHERE IdCliente = @idCliente", conexao, transaction);
+                        commandDeleteServicos1.Parameters.AddWithValue("@idCliente", clientes[id].Id);
+                        commandDeleteServicos1.ExecuteNonQuery();
+
+                        // Excluir referências em AtendimentoProdutos
+                        MySqlCommand commandDeleteProdutos1 = new MySqlCommand("DELETE FROM AtendimentoProdutos WHERE IdCliente = @idCliente", conexao, transaction);
+                        commandDeleteProdutos1.Parameters.AddWithValue("@idCliente", clientes[id].Id);
+                        commandDeleteProdutos1.ExecuteNonQuery();
+
+                        // Agora exclua o Cliente
                         command.CommandText = "DELETE FROM Cliente WHERE id = @id";
-                        command.Parameters.AddWithValue("@id", id);
+                        command.Parameters.AddWithValue("@id", clientes[id].Id);
 
                         int rowsaffectedCliente = command.ExecuteNonQuery();
                         if (rowsaffectedCliente > 0)
@@ -657,20 +684,23 @@ namespace Repo
                         break;
 
                     case "atendimento":
+                        // Excluir referências em ServicoAtendimento
+                        MySqlCommand commandDeleteServicos2 = new MySqlCommand("DELETE FROM ServicoAtendimento WHERE idAtendimento = @idAtendimento", conexao, transaction);
+                        commandDeleteServicos2.Parameters.AddWithValue("@idAtendimento", atendimentos[id].Id);
+                        commandDeleteServicos2.ExecuteNonQuery();
+
+                        // Excluir referências em AtendimentoProdutos
+                        MySqlCommand commandDeleteProdutos2 = new MySqlCommand("DELETE FROM AtendimentoProdutos WHERE idAtendimento = @idAtendimento", conexao, transaction);
+                        commandDeleteProdutos2.Parameters.AddWithValue("@idAtendimento", atendimentos[id].Id);
+                        commandDeleteProdutos2.ExecuteNonQuery();
+
+                        // Agora exclua o Atendimento
                         command.CommandText = "DELETE FROM Atendimento WHERE id = @id";
-                        command.Parameters.AddWithValue("@id", id);
+                        command.Parameters.AddWithValue("@id", atendimentos[id].Id);
 
                         int rowsaffectedAtendimento = command.ExecuteNonQuery();
                         if (rowsaffectedAtendimento > 0)
                         {
-                            MySqlCommand commandDeleteServicos = new MySqlCommand("DELETE FROM ServicoAtendimento WHERE idAtendimento = @idAtendimento", conexao, transaction);
-                            commandDeleteServicos.Parameters.AddWithValue("@idAtendimento", id);
-                            commandDeleteServicos.ExecuteNonQuery();
-
-                            MySqlCommand commandDeleteProdutos = new MySqlCommand("DELETE FROM AtendimentoProdutos WHERE idAtendimento = @idAtendimento", conexao, transaction);
-                            commandDeleteProdutos.Parameters.AddWithValue("@idAtendimento", id);
-                            commandDeleteProdutos.ExecuteNonQuery();
-
                             MessageBox.Show("Atendimento excluído com sucesso.");
                             Atendimento atendimentoExistente = atendimentos.FirstOrDefault(a => a.Id == id);
                             if (atendimentoExistente != null)
@@ -697,9 +727,9 @@ namespace Repo
                 {
                     transaction.Rollback();
                 }
-                catch
+                catch (Exception rollbackEx)
                 {
-                    // Ignorar erros de rollback
+                    MessageBox.Show("Erro ao fazer rollback: " + rollbackEx.Message);
                 }
 
                 MessageBox.Show("Erro ao excluir registro: " + ex.Message);

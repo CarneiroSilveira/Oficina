@@ -13,8 +13,10 @@ namespace Model
         {
             Nome = nome;
             Preco = preco;
-
-            DB.Criar(this);
+        }
+        public static void CriarProduto(Produtos produto)
+        {
+            DB.Criar(produto);
         }
         public static void Sincronizar()
         {
