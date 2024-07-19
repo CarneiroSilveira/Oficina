@@ -10,9 +10,6 @@
     <Compile Update="View\Clientes\Cliente.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="View\Clientes\DeletarClientes.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="View\MenuPrincipal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -20,9 +17,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="View\Servico\AlterarServico.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="View\Servico\DeletarServico.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="View\Servico\Servico.cs">
