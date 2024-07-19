@@ -12,9 +12,9 @@ namespace Views{
         private readonly Label LabelAdicional;
         private readonly TextBox InputDataInicio;
         private readonly TextBox InputDataTermino;
-        private readonly TextBox InputCliente;
-        private readonly TextBox InputSvcRealizado;
-        private readonly TextBox InputPdtUtilizado;
+        private readonly ComboBox ComboBoxCliente;
+        private readonly ComboBox ComboBoxSvcRealizado;
+        private readonly ComboBox ComboBoxPdtUtilizado;
         private readonly TextBox InputDesconto;
         private readonly TextBox InputAdicional;
         private readonly Button ButtonCriar;
@@ -79,15 +79,15 @@ namespace Views{
                 Location = new Point(325, 205),
                 Size = new Size(250, 40),
             };
-            InputCliente = new TextBox(){
+            ComboBoxCliente = new ComboBox(){
                 Location = new Point(325, 248),
                 Size = new Size(250, 40),
             };
-            InputSvcRealizado = new TextBox(){
+            ComboBoxSvcRealizado = new ComboBox(){
                 Location = new Point(325, 288),
                 Size = new Size(250, 40),
             };
-            InputPdtUtilizado = new TextBox(){
+            ComboBoxPdtUtilizado = new ComboBox(){
                 Location = new Point(325, 331),
                 Size = new Size(250, 40),
             };
@@ -131,9 +131,9 @@ namespace Views{
             Controls.Add(LabelAdicional);
             Controls.Add(InputDataInicio);
             Controls.Add(InputDataTermino);
-            Controls.Add(InputCliente);
-            Controls.Add(InputSvcRealizado);
-            Controls.Add(InputPdtUtilizado);
+            Controls.Add(ComboBoxCliente);
+            Controls.Add(ComboBoxSvcRealizado);
+            Controls.Add(ComboBoxPdtUtilizado);
             Controls.Add(InputDesconto);
             Controls.Add(InputAdicional);
             Controls.Add(ButtonCriar);
