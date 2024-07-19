@@ -27,49 +27,49 @@ namespace Views{
                 Text = "MENU DE ATENDIMENTO",
                 Location = new Point(190, 100),
                 Size = new Size(600, 44),
-                Font = new Font("Arial", 32)
+                Font = new Font("Arial", 26)
             };
             LabelDataInicio = new Label(){
                 Text = "Data de início:",
                 Location = new Point(95, 165),
                 Size = new Size(205, 30),
-                Font = new Font("Arial", 22)
+                Font = new Font("Arial", 18)
             };
             LabelDataTermino = new Label(){
                 Text = "Data do término:",
                 Location = new Point(69, 205),
                 Size = new Size(235, 40),
-                Font = new Font("Arial", 22)
+                Font = new Font("Arial", 18)
             };
             LabelCliente = new Label(){
                 Text = "Cliente:",
                 Location = new Point(163, 248),
                 Size = new Size(145, 40),
-                Font = new Font("Arial", 22)
+                Font = new Font("Arial", 18)
             };
             LabelSvcRealizado = new Label(){
                 Text = "Serviço realizado:",
                 Location = new Point(57, 288),
                 Size = new Size(250, 40),
-                Font = new Font("Arial", 22)
+                Font = new Font("Arial", 18)
             };
             LabelPdtUtilizado = new Label(){
                 Text = "Produto utilizado:",
                 Location = new Point(61, 331),
                 Size = new Size(250, 40),
-                Font = new Font("Arial", 22)
+                Font = new Font("Arial", 18)
             };
             LabelDesconto = new Label(){
                 Text = "Desconto:",
                 Location = new Point(140, 373),
                 Size = new Size(165, 40),
-                Font = new Font("Arial", 22)
+                Font = new Font("Arial", 18)
             };
             LabelAdicional = new Label(){
                 Text = "Valor adicional:",
                 Location = new Point(86, 411),
                 Size = new Size(215, 40),
-                Font = new Font("Arial", 22)
+                Font = new Font("Arial", 18)
             };
             InputDataInicio = new TextBox(){
                 Location = new Point(325, 165),

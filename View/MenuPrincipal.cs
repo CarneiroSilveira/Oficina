@@ -9,19 +9,22 @@ namespace Views{
         public ViewMenu(){
             Size = new Size(800, 700);
             StartPosition = FormStartPosition.CenterScreen;
+            BackColor = Color.DimGray;
 
             ButtonClientes = new Button(){
                 Text = "Clientes",
                 Location = new Point(225, 252),
                 Size = new Size(350, 60),
                 Font = new Font("Arial", 20),
+                BackColor = Color.GhostWhite
             };
             ButtonClientes.Click += ClickEntrarClientes;
             ButtonServico = new Button(){
                 Text = "Serviços",
                 Location = new Point(225, 322),
                 Size = new Size(350, 60),
-                Font = new Font("Arial", 20)
+                Font = new Font("Arial", 20),
+                BackColor = Color.GhostWhite
             };
             ButtonServico.Click += ClickEntrarServicos;
             
@@ -29,7 +32,8 @@ namespace Views{
                 Text = "Produtos",
                 Location = new Point(225, 392),
                 Size = new Size(350, 60),
-                Font = new Font("Arial", 20)
+                Font = new Font("Arial", 20),
+                BackColor = Color.GhostWhite
             };
             ButtonProdutos.Click += ClickEntrarProdutos;
 
@@ -37,14 +41,17 @@ namespace Views{
                 Text = "Atendimentos",
                 Location = new Point(225, 462),
                 Size = new Size(350, 60),
-                Font = new Font("Arial", 20)
+                Font = new Font("Arial", 20),
+                BackColor = Color.GhostWhite
             };
+            ButtonAtendimentos.Click += ClickEntrarAtendimentos;
 
             ButtonSair = new Button(){
                 Text = "Sair",
                 Location = new Point(225, 532),
                 Size = new Size(350, 60),
-                Font = new Font("Arial", 20)
+                Font = new Font("Arial", 20),
+                BackColor = Color.GhostWhite
             };
             ButtonSair.Click += ClickSair;
 
@@ -56,15 +63,19 @@ namespace Views{
         }
         private void ClickEntrarClientes(object? sender, EventArgs e){
             Hide();
-            new ViewClientes().Show();
+            new ViewClientes(this).Show();
         }
         private void ClickEntrarServicos(object? sender, EventArgs e){
             Hide();
-            new ViewServico().Show();
+            new ViewServico(this).Show();
         }
         private void ClickEntrarProdutos(object? sender, EventArgs e){
             Hide();
-            new ViewProdutos().Show();
+            new ViewProdutos(this).Show();
+        }
+        private void ClickEntrarAtendimentos(object? sender, EventArgs e){
+            Hide();
+            new ViewAtendimentos().Show();
         }
         private void ClickSair(object? sender, EventArgs e){
             Close();
