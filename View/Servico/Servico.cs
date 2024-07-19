@@ -5,18 +5,22 @@ namespace Views
 {
     public class ViewServico : Form
     {
+        private readonly Form ParentVoltarServico;
         private readonly Label LabelTitulo;
         private readonly Button ButtonAdicionar;
         private readonly Button ButtonAlterar;
         private readonly Button ButtonDeletar;
+        private readonly Button ButtonVoltar;
         private readonly DataGridView ListaDeServicos;
 
-        public ViewServico()
+        public ViewServico(Form parent)
         {
             ControllerServico.Sincronizar();
 
+            ParentVoltarServico = parent;
             Size = new Size(900, 700);
             StartPosition = FormStartPosition.CenterScreen;
+            BackColor = Color.DimGray;
 
             LabelTitulo = new Label()
             {
@@ -30,7 +34,8 @@ namespace Views
                 Text = "ADICIONAR",
                 Location = new Point(50, 550),
                 Font = new Font("Arial", 16),
-                Size = new Size(200, 70)
+                Size = new Size(200, 70),
+                BackColor = Color.GhostWhite
             };
             ButtonAdicionar.Click += ClickAdicionar;
 
@@ -39,7 +44,8 @@ namespace Views
                 Text = "ALTERAR",
                 Location = new Point(333, 550),
                 Font = new Font("Arial", 16),
-                Size = new Size(200, 70)
+                Size = new Size(200, 70),
+                BackColor = Color.GhostWhite
             };
             ButtonAlterar.Click += ClickAlterar;
 
@@ -48,9 +54,19 @@ namespace Views
                 Text = "DELETAR",
                 Location = new Point(633, 550),
                 Font = new Font("Arial", 16),
-                Size = new Size(200, 70)
+                Size = new Size(200, 70),
+                BackColor = Color.GhostWhite
             };
             ButtonDeletar.Click += ClickDeletar;
+
+            ButtonVoltar = new Button(){
+                Text = "< VOLTAR",
+                Location = new Point(20, 20),
+                Font = new Font("Arial", 12),
+                Size = new Size(150, 40),
+                BackColor = Color.GhostWhite
+            };
+            ButtonVoltar.Click += ClickVoltar;
 
             ListaDeServicos = new DataGridView()
             {
@@ -65,6 +81,7 @@ namespace Views
             Controls.Add(ButtonAdicionar);
             Controls.Add(ButtonAlterar);
             Controls.Add(ButtonDeletar);
+            Controls.Add(ButtonVoltar);
             Controls.Add(ListaDeServicos);
             Listar();
         }
@@ -116,5 +133,11 @@ namespace Views
             ControllerServico.DeletarServico(index);
             Listar();
         }
+        private void ClickVoltar(object? sender, EventArgs e)
+        {
+            Close();
+            ParentVoltarServico.Show(); 
+        }
+        
     }
 }
