@@ -407,7 +407,7 @@ namespace Repo
             }
         }
 
-        public static void Update(object schema)
+        public static void Update(int indice, object schema)
         {
             InitConexao();
             MySqlCommand command = conexao.CreateCommand();
@@ -425,13 +425,13 @@ namespace Repo
                         command.CommandText = "UPDATE Servico SET Nome = @Nome, Preco = @Preco WHERE id = @id";
                         command.Parameters.AddWithValue("@Nome", servico.Nome);
                         command.Parameters.AddWithValue("@Preco", servico.Preco);
-                        command.Parameters.AddWithValue("@id", servico.Id);
+                        command.Parameters.AddWithValue("@id", indice);
 
                         int rowsaffectedServico = command.ExecuteNonQuery();
                         if (rowsaffectedServico > 0)
                         {
                             MessageBox.Show("Serviço atualizado com sucesso.");
-                            Servico servicoExistente = servicos.FirstOrDefault(s => s.Id == servico.Id);
+                            Servico servicoExistente = servicos.FirstOrDefault(s => s.Id == indice);
                             if (servicoExistente != null)
                             {
                                 servicoExistente.Nome = servico.Nome;
@@ -449,13 +449,13 @@ namespace Repo
                         command.CommandText = "UPDATE Produtos SET Nome = @Nome, Preco = @Preco WHERE id = @id";
                         command.Parameters.AddWithValue("@Nome", produto.Nome);
                         command.Parameters.AddWithValue("@Preco", produto.Preco);
-                        command.Parameters.AddWithValue("@id", produto.Id);
+                        command.Parameters.AddWithValue("@id", indice);
 
                         int rowsaffectedProduto = command.ExecuteNonQuery();
                         if (rowsaffectedProduto > 0)
                         {
                             MessageBox.Show("Produto atualizado com sucesso.");
-                            Produtos produtoExistente = produtos.FirstOrDefault(p => p.Id == produto.Id);
+                            Produtos produtoExistente = produtos.FirstOrDefault(p => p.Id == indice);
                             if (produtoExistente != null)
                             {
                                 produtoExistente.Nome = produto.Nome;
@@ -475,13 +475,13 @@ namespace Repo
                         command.Parameters.AddWithValue("@CPF", cliente.CPF);
                         command.Parameters.AddWithValue("@Numero", cliente.Numero);
                         command.Parameters.AddWithValue("@Email", cliente.Email);
-                        command.Parameters.AddWithValue("@id", cliente.Id);
+                        command.Parameters.AddWithValue("@id", indice);
 
                         int rowsaffectedCliente = command.ExecuteNonQuery();
                         if (rowsaffectedCliente > 0)
                         {
                             MessageBox.Show("Cliente atualizado com sucesso.");
-                            Cliente clienteExistente = clientes.FirstOrDefault(c => c.Id == cliente.Id);
+                            Cliente clienteExistente = clientes.FirstOrDefault(c => c.Id == indice);
                             if (clienteExistente != null)
                             {
                                 clienteExistente.Nome = cliente.Nome;
@@ -506,38 +506,38 @@ namespace Repo
                         command.Parameters.AddWithValue("@Descricao", atendimento.Descricao);
                         command.Parameters.AddWithValue("@CustoExtra", atendimento.CustoExtra);
                         command.Parameters.AddWithValue("@Desconto", atendimento.Desconto);
-                        command.Parameters.AddWithValue("@id", atendimento.Id);
+                        command.Parameters.AddWithValue("@id", indice);
 
                         int rowsaffectedAtendimento = command.ExecuteNonQuery();
                         if (rowsaffectedAtendimento > 0)
                         {
                             MySqlCommand commandDeleteServicos = new MySqlCommand("DELETE FROM ServicoAtendimento WHERE idAtendimento = @idAtendimento", conexao, transaction);
-                            commandDeleteServicos.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                            commandDeleteServicos.Parameters.AddWithValue("@idAtendimento", indice);
                             commandDeleteServicos.ExecuteNonQuery();
 
                             foreach (Servico servic0 in atendimento.ServicosRealizados)
                             {
                                 MySqlCommand commandServico = new MySqlCommand("INSERT INTO ServicoAtendimento (idAtendimento, idServico) VALUES (@idAtendimento, @idServico)", conexao, transaction);
-                                commandServico.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                                commandServico.Parameters.AddWithValue("@idAtendimento", indice);
                                 commandServico.Parameters.AddWithValue("@idServico", servic0.Id);
                                 commandServico.ExecuteNonQuery();
                             }
 
                             MySqlCommand commandDeleteProdutos = new MySqlCommand("DELETE FROM AtendimentoProdutos WHERE idAtendimento = @idAtendimento", conexao, transaction);
-                            commandDeleteProdutos.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                            commandDeleteProdutos.Parameters.AddWithValue("@idAtendimento", indice);
                             commandDeleteProdutos.ExecuteNonQuery();
 
                             foreach (Produtos produt0 in atendimento.ProdutosUsados)
                             {
                                 MySqlCommand commandProduto = new MySqlCommand("INSERT INTO AtendimentoProdutos (idAtendimento, idProdutos, Quantidade) VALUES (@idAtendimento, @idProdutos, @Quantidade)", conexao, transaction);
-                                commandProduto.Parameters.AddWithValue("@idAtendimento", atendimento.Id);
+                                commandProduto.Parameters.AddWithValue("@idAtendimento", indice);
                                 commandProduto.Parameters.AddWithValue("@idProdutos", produt0.Id);
                                 commandProduto.Parameters.AddWithValue("@Quantidade", produt0.Quantidade);
                                 commandProduto.ExecuteNonQuery();
                             }
 
                             MessageBox.Show("Atendimento atualizado com sucesso.");
-                            Atendimento atendimentoExistente = atendimentos.FirstOrDefault(a => a.Id == atendimento.Id);
+                            Atendimento atendimentoExistente = atendimentos.FirstOrDefault(a => a.Id == indice);
                             if (atendimentoExistente != null)
                             {
                                 atendimentoExistente.ClienteAtendido = atendimento.ClienteAtendido;

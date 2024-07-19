@@ -23,13 +23,10 @@ namespace Controller
 
         public static void AlterarServico(int indice, string nome, double preco)
         {
-            Servico servico = new Servico(nome, preco)
-            {
-                Id = indice + 1
-            };
+            Servico servico = new Servico(nome, preco);
             if (servico.Id > 0)
             {
-                Servico.AlterarServico(servico);
+                Servico.AlterarServico(indice, servico);
                 Console.WriteLine("Serviço alterado");
             }
             else

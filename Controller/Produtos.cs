@@ -23,13 +23,10 @@ namespace Controller
 
         public static void AlterarProdutos(int indice, string nome, double preco)
         {
-            Produtos produto = new Produtos(nome, preco)
+            Produtos produto = new Produtos(nome, preco);
+            if (indice > 0)
             {
-                Id = indice + 1
-            };
-            if (produto.Id > 0)
-            {
-                Produtos.AlterarProdutos(produto);
+                Produtos.AlterarProdutos(indice, produto);
                 Console.WriteLine("Produto alterado");
             }
             else

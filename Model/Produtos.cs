@@ -28,9 +28,9 @@ namespace Model
             return DB.ListAll<Produtos>();
         }
 
-        public static void AlterarProdutos(Produtos produto)
+        public static void AlterarProdutos(int indice, Produtos produto)
         {
-            DB.Update(produto);
+            DB.Update(indice, produto);
         }
 
         public static void DeletarProdutos(int indice)

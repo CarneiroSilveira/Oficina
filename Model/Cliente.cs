@@ -32,9 +32,9 @@ namespace Model
             return DB.ListAll<Cliente>();
         }
 
-        public static void AlterarCliente(Cliente cliente)
+        public static void AlterarCliente(int indice, Cliente cliente)
         {
-            DB.Update(cliente);
+            DB.Update(indice, cliente);
         }
 
         public static void DeletarCliente(int indice)
