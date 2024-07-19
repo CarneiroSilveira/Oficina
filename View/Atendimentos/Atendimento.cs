@@ -20,6 +20,7 @@ namespace Views{
         private readonly Button ButtonCriar;
         private readonly Button ButtonAlterar;
         private readonly Button ButtonDeletar;
+        private readonly DataGridView ListaDeAtendimentos;
         public ViewAtendimentos(){
             Size = new Size(900, 850);
             StartPosition = FormStartPosition.CenterScreen;
@@ -73,7 +74,7 @@ namespace Views{
             };
             InputDataInicio = new TextBox(){
                 Location = new Point(325, 165),
-                Size = new Size(250, 30),
+                Size = new Size(250, 40),
             };
             InputDataTermino = new TextBox(){
                 Location = new Point(325, 205),
@@ -121,6 +122,10 @@ namespace Views{
                 Font = new Font("Arial", 16),
                 Size = new Size(200, 70)
             };
+            ListaDeAtendimentos = new DataGridView(){
+                Location = new Point (50, 460),
+                Size = new Size(789, 230)
+            };
             Controls.Add(LabelTitulo);
             Controls.Add(LabelDataInicio);
             Controls.Add(LabelDataTermino);
@@ -139,6 +144,7 @@ namespace Views{
             Controls.Add(ButtonCriar);
             Controls.Add(ButtonAlterar);
             Controls.Add(ButtonDeletar);
+            Controls.Add(ListaDeAtendimentos);
         }
     }
 }
