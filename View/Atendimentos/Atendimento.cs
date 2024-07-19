@@ -12,14 +12,15 @@ namespace Views{
         private readonly Label LabelAdicional;
         private readonly TextBox InputDataInicio;
         private readonly TextBox InputDataTermino;
-        private readonly TextBox InputCliente;
-        private readonly TextBox InputSvcRealizado;
-        private readonly TextBox InputPdtUtilizado;
+        private readonly ComboBox ComboBoxCliente;
+        private readonly ComboBox ComboBoxSvcRealizado;
+        private readonly ComboBox ComboBoxPdtUtilizado;
         private readonly TextBox InputDesconto;
         private readonly TextBox InputAdicional;
         private readonly Button ButtonCriar;
         private readonly Button ButtonAlterar;
         private readonly Button ButtonDeletar;
+        private readonly DataGridView ListaDeAtendimentos;
         public ViewAtendimentos(){
             Size = new Size(900, 850);
             StartPosition = FormStartPosition.CenterScreen;
@@ -73,21 +74,21 @@ namespace Views{
             };
             InputDataInicio = new TextBox(){
                 Location = new Point(325, 165),
-                Size = new Size(250, 30),
+                Size = new Size(250, 40),
             };
             InputDataTermino = new TextBox(){
                 Location = new Point(325, 205),
                 Size = new Size(250, 40),
             };
-            InputCliente = new TextBox(){
+            ComboBoxCliente = new ComboBox(){
                 Location = new Point(325, 248),
                 Size = new Size(250, 40),
             };
-            InputSvcRealizado = new TextBox(){
+            ComboBoxSvcRealizado = new ComboBox(){
                 Location = new Point(325, 288),
                 Size = new Size(250, 40),
             };
-            InputPdtUtilizado = new TextBox(){
+            ComboBoxPdtUtilizado = new ComboBox(){
                 Location = new Point(325, 331),
                 Size = new Size(250, 40),
             };
@@ -121,6 +122,10 @@ namespace Views{
                 Font = new Font("Arial", 16),
                 Size = new Size(200, 70)
             };
+            ListaDeAtendimentos = new DataGridView(){
+                Location = new Point (50, 460),
+                Size = new Size(789, 230)
+            };
             Controls.Add(LabelTitulo);
             Controls.Add(LabelDataInicio);
             Controls.Add(LabelDataTermino);
@@ -131,14 +136,15 @@ namespace Views{
             Controls.Add(LabelAdicional);
             Controls.Add(InputDataInicio);
             Controls.Add(InputDataTermino);
-            Controls.Add(InputCliente);
-            Controls.Add(InputSvcRealizado);
-            Controls.Add(InputPdtUtilizado);
+            Controls.Add(ComboBoxCliente);
+            Controls.Add(ComboBoxSvcRealizado);
+            Controls.Add(ComboBoxPdtUtilizado);
             Controls.Add(InputDesconto);
             Controls.Add(InputAdicional);
             Controls.Add(ButtonCriar);
             Controls.Add(ButtonAlterar);
             Controls.Add(ButtonDeletar);
+            Controls.Add(ListaDeAtendimentos);
         }
     }
 }
