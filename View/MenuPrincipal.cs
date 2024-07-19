@@ -5,6 +5,7 @@ namespace Views{
         private readonly Button ButtonProdutos;
         private readonly Button ButtonAtendimentos;
         private readonly Button ButtonSair;
+        private readonly PictureBox PictureLogo;
 
         public ViewMenu(){
             Size = new Size(800, 700);
@@ -54,12 +55,18 @@ namespace Views{
                 BackColor = Color.GhostWhite
             };
             ButtonSair.Click += ClickSair;
+            PictureLogo = new PictureBox(){
+                Size = new Size(275, 257),
+                Location = new Point (260, 0),
+                Image = Image.FromFile("logo.png")
+            };
 
             Controls.Add(ButtonClientes);
             Controls.Add(ButtonServico);
             Controls.Add(ButtonProdutos);
             Controls.Add(ButtonAtendimentos);
             Controls.Add(ButtonSair);
+            Controls.Add(PictureLogo);
         }
         private void ClickEntrarClientes(object? sender, EventArgs e){
             Hide();
