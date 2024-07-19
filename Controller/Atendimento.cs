@@ -25,11 +25,11 @@ namespace Controller
         {
             Atendimento atendimento = new Atendimento(datafim, custototal, descricao, custoextra, desconto, servicos, produtos, cliente)
             {
-                Id = indice + 1
+                Id = indice
             };
             if (atendimento.Id > 0)
             {
-                Atendimento.AlterarAtendimento(atendimento);
+                Atendimento.AlterarAtendimento(indice, atendimento);
                 Console.WriteLine("Atendimento alterado");
             }
             else

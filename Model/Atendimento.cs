@@ -41,9 +41,9 @@ namespace Model
             return DB.ListAll<Atendimento>();
         }
 
-        public static void AlterarAtendimento(Atendimento atendimento)
+        public static void AlterarAtendimento(int indice ,Atendimento atendimento)
         {
-            DB.Update(atendimento);
+            DB.Update(indice, atendimento);
         }
         public static void DeletarAtendimento(int indice)
         {

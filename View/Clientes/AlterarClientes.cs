@@ -1,7 +1,9 @@
 using Controller;
 
-namespace Views{
-    public class ViewAlterarClientes : Form{
+namespace Views
+{
+    public class ViewAlterarClientes : Form
+    {
         private readonly Form ParentFormAlterarClientes;
         private readonly Label LabelIndice;
         private readonly Label LabelNomeCliente;
@@ -16,68 +18,80 @@ namespace Views{
         private readonly Button ButtonFechar;
         private readonly Button ButtonConfirmar;
         public event EventHandler clienteAlterado; // Evento para notificar edição de clientes
-        public ViewAlterarClientes(Form parent){
+        public ViewAlterarClientes(Form parent)
+        {
             ParentFormAlterarClientes = parent;
-            
+
             StartPosition = FormStartPosition.CenterScreen;
             Size = new Size(700, 500);
 
-            LabelIndice = new Label(){
+            LabelIndice = new Label()
+            {
                 Text = "ÍNDICE:",
                 Location = new Point(100, 25),
                 Font = new Font("Arial", 16),
                 Size = new Size(115, 30)
             };
-            LabelNomeCliente = new Label(){
+            LabelNomeCliente = new Label()
+            {
                 Text = "NOME:",
                 Location = new Point(100, 85),
                 Font = new Font("Arial", 16),
                 Size = new Size(105, 30)
             };
-            LabelTelefone = new Label(){
+            LabelTelefone = new Label()
+            {
                 Text = "FONE:",
                 Location = new Point(100, 145),
                 Font = new Font("Arial", 16),
                 Size = new Size(105, 30)
             };
-            LabelCPF = new Label(){
+            LabelCPF = new Label()
+            {
                 Text = "CPF:",
                 Location = new Point(100, 205),
                 Font = new Font("Arial", 16),
-                Size = new Size(95, 30) 
+                Size = new Size(95, 30)
             };
-            LabelEmail = new Label(){
+            LabelEmail = new Label()
+            {
                 Text = "EMAIL:",
                 Location = new Point(100, 265),
                 Font = new Font("Arial", 16),
                 Size = new Size(110, 30)
             };
-            InputIndice = new TextBox(){
+            InputIndice = new TextBox()
+            {
                 Name = "Indice",
                 Location = new Point(220, 27),
                 Size = new Size(350, 40)
             };
-            InputNomeCliente = new TextBox(){
+            InputNomeCliente = new TextBox()
+            {
                 Name = "Nome cliente",
                 Location = new Point(220, 87),
                 Size = new Size(350, 40)
             };
-            InputTelefone = new TextBox(){
+            InputTelefone = new TextBox()
+            {
                 Name = "Fone",
                 Location = new Point(220, 147),
                 Size = new Size(350, 40)
             };
-            InputCPF = new TextBox(){
+            InputCPF = new TextBox()
+            {
                 Name = "CPF",
                 Location = new Point(220, 207),
                 Size = new Size(350, 40)
             };
-            InputEmail = new TextBox(){
+            InputEmail = new TextBox()
+            {
                 Name = "Email",
                 Location = new Point(220, 267),
                 Size = new Size(350, 40)
             };
-            ButtonFechar = new Button(){
+            ButtonFechar = new Button()
+            {
                 Text = "FECHAR",
                 Location = new Point(60, 345),
                 Font = new Font("Arial", 20),
@@ -85,7 +99,8 @@ namespace Views{
             };
             ButtonFechar.Click += ClickFechar;
 
-            ButtonConfirmar = new Button(){
+            ButtonConfirmar = new Button()
+            {
                 Text = "CONFIRMAR",
                 Location = new Point(360, 345),
                 Font = new Font("Arial", 20),
@@ -104,26 +119,31 @@ namespace Views{
             Controls.Add(InputCPF);
             Controls.Add(InputEmail);
             Controls.Add(ButtonFechar);
-            Controls.Add(ButtonConfirmar);           
+            Controls.Add(ButtonConfirmar);
         }
-        private void ClickFechar(object? sender, EventArgs e){
+        private void ClickFechar(object? sender, EventArgs e)
+        {
             Close();
             ParentFormAlterarClientes.Show();
         }
-        private void ClickConfirmar(object? sender, EventArgs e){
-            if (InputIndice.Text == ""){
+        private void ClickConfirmar(object? sender, EventArgs e)
+        {
+            if (InputIndice.Text == "")
+            {
                 MessageBox.Show("O ÍNDICE ESTÁ VAZIO, COLOQUE O ÍNDICE DA TABELA");
                 return;
             }
-            if (InputNomeCliente.Text == ""){
+            if (InputNomeCliente.Text == "")
+            {
                 MessageBox.Show("O NOME ESTÁ VAZIO, COLOQUE O NOME DO CLIENTE");
                 return;
             }
-            if (InputTelefone.Text == ""){
+            if (InputTelefone.Text == "")
+            {
                 MessageBox.Show("O TELEFONE ESTÁ VAZIO, COLOQUE O TELEFONE DO CLIENTE");
                 return;
             }
-            //ControllerCliente.AlterarCliente(InputIndice.Text, InputNomeCliente.Text, Convert.ToDouble(InputTelefone.Text));
+            ControllerCliente.AlterarCliente(int.Parse(InputIndice.Text), InputNomeCliente.Text, InputTelefone.Text, InputCPF.Text, InputEmail.Text);
             clienteAlterado?.Invoke(this, EventArgs.Empty); // Disparar evento de cliente alterado
             Close();
             ParentFormAlterarClientes.Show();

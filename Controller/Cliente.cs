@@ -25,11 +25,11 @@ namespace Controller
         {
             Cliente cliente = new Cliente(nome, numero, cpf, email)
             {
-                Id = indice + 1
+                Id = indice
             };
             if (cliente.Id > 0)
             {
-                Cliente.AlterarCliente(cliente);
+                Cliente.AlterarCliente(indice, cliente);
                 Console.WriteLine("Cliente alterado");
             }
             else

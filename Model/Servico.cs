@@ -28,9 +28,9 @@ namespace Model
             return DB.ListAll<Servico>();
         }
 
-        public static void AlterarServico(Servico servico)
+        public static void AlterarServico(int indice, Servico servico)
         {
-            DB.Update(servico);
+            DB.Update(indice, servico);
         }
 
         public static void DeletarServico(int indice)
